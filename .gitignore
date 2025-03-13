@@ -1,0 +1,41 @@
+# Ignore arquivos de build
+bin/
+obj/
+out/
+
+# Configurações de usuário
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Logs, lock files e cache
+*.log
+project.lock.json
+*.vspscc
+*.vssscc
+.DS_Store
+.vscode/
+
+# Configurações do Visual Studio
+.vs/
+.idea/
+*.csproj.user
+*.csproj.CoreCompileInputs.cache
+*.csproj.CoreCompileOutputs.cache
+*.sln.ide
+
+# Pacotes e dependências
+node_modules/
+packages/
+wwwroot/node_modules/
+
+# Arquivos de publicação e deploy
+publish/
+app.publish/
+*.publishsettings
+*.pubxml
+*.pfx
+
+# Docker
+docker-compose.override.yml

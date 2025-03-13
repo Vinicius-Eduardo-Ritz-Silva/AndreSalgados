@@ -1,0 +1,16 @@
+# Normalizar finais de linha
+* text=auto
+
+# Definir arquivos binários para evitar conflitos
+*.dll binary
+*.exe binary
+*.pdf binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.zip binary
+*.tar binary
+*.gz binary
+*.7z binary
