@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace AndreSalgados.Models
+{
+    [Table("VR_CLIENTE")]
+    public class Cliente : MainModel
+    {
+        [Column("NM_NOMECLIE")]
+        public string Nome { get; set; }
+        [Column("NR_NUMECLIE")]
+        public string Numero { get; set; }
+        [Column("GN_ENDECLIE")]
+        public string Endereco { get; set; }
+    }
+}
