@@ -13,6 +13,9 @@ namespace AndreSalgados.Models
         [Column("NR_VALOPEDI")]
         public decimal Valor { get; set; }
 
+        [Column("FL_PEDIPAGO")]
+        public bool Pago { get; set; }
+
         #endregion
 
         #region Relacionamentos
@@ -22,6 +25,12 @@ namespace AndreSalgados.Models
 
         [ForeignKey("ClienteId")]
         public virtual Cliente Cliente { get; set; }
+
+        [Column("ID_COBR")]
+        public Guid? CobrancaId { get; set; }
+
+        [ForeignKey("CobrancaId")]
+        public virtual Cobranca Cobranca { get; set; }
 
         #endregion
     }
