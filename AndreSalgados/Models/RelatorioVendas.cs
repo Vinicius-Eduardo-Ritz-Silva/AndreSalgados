@@ -2,19 +2,16 @@
 
 namespace AndreSalgados.Models
 {
-    [Table("VR_PEDIDO")]
-    public class Pedido : MainModel
+    [Table("VR_VENDAS_RELATORIO")]
+    public class RelatorioVendas : MainModel
     {
         #region Propriedades
 
-        [Column("NR_QUANPEDI")]
-        public int Quantidade { get; set; }
-
-        [Column("NR_VALOPEDI")]
+        [Column("NR_VALOVEND")]
         public decimal Valor { get; set; }
 
-        [Column("FL_PEDIPAGO")]
-        public bool Pago { get; set; }
+        [Column("FL_VENDGANH")]
+        public bool VendaGanha { get; set; }
 
         #endregion
 
@@ -25,12 +22,6 @@ namespace AndreSalgados.Models
 
         [ForeignKey("ClienteId")]
         public virtual Cliente Cliente { get; set; }
-
-        [Column("ID_COBR")]
-        public Guid? CobrancaId { get; set; }
-
-        [ForeignKey("CobrancaId")]
-        public virtual Cobranca Cobranca { get; set; }
 
         #endregion
     }
