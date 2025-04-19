@@ -1,4 +1,6 @@
+using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
+using Infraestructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,18 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VrContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConncetion")));
+
+#region Interfaces e Repositories
+
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+builder.Services.AddScoped<ICobrancaRepository, CobrancaRepository>();
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IProdutoPedidoRepository, ProdutoPedidoRepository>();
+builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<IRelatorioVendaRepository, RelatorioVendaRepository>();
+builder.Services.AddScoped<ITipoProdutoRepository, TipoProdutoRepository>();
+
+#endregion
 
 var app = builder.Build();
 
