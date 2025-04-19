@@ -19,6 +19,9 @@ namespace AndreSalgados.Models
         [Column("FL_DESCPORC")]
         public bool DescontoPorcento { get; set; }
 
+        [Column("FL_COBRPERD")]
+        public bool CobrancaPerdida { get; set; }
+
         #endregion
 
         #region Relacionamentos
