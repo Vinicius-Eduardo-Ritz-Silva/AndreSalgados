@@ -20,6 +20,16 @@ namespace Infraestructure.Data
         public DbSet<RelatorioVenda> RelatoriosVendas { get; set; }
         public DbSet<TipoProduto> TiposProdutos { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
+            //Configurar o resto depois
+        }
+
+        private void ConfigureMainModel(ModelBuilder modelBuilder)
+        {
+            //Configurar depois
+        }
     }
 }
