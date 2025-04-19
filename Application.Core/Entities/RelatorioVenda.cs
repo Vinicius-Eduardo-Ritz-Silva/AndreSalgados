@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AndreSalgados.Models
+namespace Application.Core.Entities
 {
     [Table("VR_VENDAS_RELATORIO")]
-    public class RelatorioVendas : MainModel
+    public class RelatorioVenda : MainModel
     {
         #region Propriedades
 
