@@ -1,4 +1,4 @@
-namespace AndreSalgados.Models
+namespace Application.Core.Entities
 {
     public class ErrorViewModel
     {

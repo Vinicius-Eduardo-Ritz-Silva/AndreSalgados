@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using AndreSalgados.Models;
+using Application.Core.Entities;
 
 namespace AndreSalgados.Controllers;
 

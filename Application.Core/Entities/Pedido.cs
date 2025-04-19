@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AndreSalgados.Models
+namespace Application.Core.Entities
 {
     [Table("VR_PEDIDO")]
     public class Pedido : MainModel
