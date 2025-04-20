@@ -9,5 +9,12 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IClienteRepository
     {
+        public IEnumerable<Cliente> Get();
+
+        public Cliente GetClienteById(Guid Id);
+
+        public bool SalvarCliente(Cliente cliente);
+
+        public bool ExcluirCliente(Guid Id);
     }
 }
