@@ -14,23 +14,34 @@ namespace AndreSalgados.Controllers
             _clienteRepository = clienteRepository;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var clientes = await Get();
+
+            return View(clientes);
         }
 
         [HttpGet]
-        public IEnumerable<Cliente> Get()
+        public async Task<IActionResult> Detalhes(Guid Id)
         {
-            var clientes = _clienteRepository.Get();
+            var cliente = await GetClienteById(Id);
+
+            return View(cliente);
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<Cliente>> Get()
+        {
+            var clientes = await _clienteRepository.Get();
 
             return clientes;
         }
 
         [HttpGet]
-        public Cliente GetClienteById(Guid Id)
+        public async Task<Cliente> GetClienteById(Guid Id)
         {
-            var cliente = _clienteRepository.GetClienteById(Id);
+            var cliente = await _clienteRepository.GetClienteById(Id);
 
             return cliente;
         }

@@ -1,0 +1,36 @@
+﻿@model Application.Core.Entities.Cliente
+
+@{
+    ViewData["Title"] = "Detalhes do Cliente";
+}
+
+<div class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <h2 class="mb-0"><i class="fas fa-user me-2"></i>Detalhes do Cliente</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Nome:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+
+                <dt class="col-sm-3">Número:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Numero)</dd>
+
+                <dt class="col-sm-3">Endereço:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Endereco)</dd>
+
+                <dt class="col-sm-3">Data de Cadastro:</dt>
+                <dd class="col-sm-9">@Model.Inclusao.ToString("dd/MM/yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Última Atualização:</dt>
+                <dd class="col-sm-9">@Model.Alteracao.ToString("dd/MM/yyyy HH:mm")</dd>
+            </dl>
+        </div>
+        <div class="card-footer bg-white">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Voltar
+            </a>
+        </div>
+    </div>
+</div>

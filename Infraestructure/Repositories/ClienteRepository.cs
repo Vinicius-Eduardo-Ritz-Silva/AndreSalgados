@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
@@ -18,11 +19,12 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
-        public IEnumerable<Cliente> Get()
+        public async Task<IEnumerable<Cliente>> Get()
         {
             try
             {
-                var clientes = _context.Clientes.Where(c => c.Ativo == true);
+                var clientes = await _context.Clientes
+                    .Where(c => c.Ativo == true).ToListAsync();
 
                 return clientes;
             }
@@ -32,11 +34,11 @@ namespace Infraestructure.Repositories
             }
         }
 
-        public Cliente GetClienteById(Guid Id)
+        public async Task<Cliente> GetClienteById(Guid Id)
         {
             try
             {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == Id);
+                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Id == Id);
 
                 return cliente;
             }

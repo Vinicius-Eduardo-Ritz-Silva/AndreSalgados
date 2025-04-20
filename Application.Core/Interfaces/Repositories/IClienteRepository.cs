@@ -9,9 +9,9 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IClienteRepository
     {
-        public IEnumerable<Cliente> Get();
+        public Task<IEnumerable<Cliente>> Get();
 
-        public Cliente GetClienteById(Guid Id);
+        public Task<Cliente> GetClienteById(Guid Id);
 
         public bool SalvarCliente(Cliente cliente);
 
