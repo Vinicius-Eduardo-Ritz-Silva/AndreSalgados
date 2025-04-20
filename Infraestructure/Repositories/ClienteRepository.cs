@@ -65,6 +65,8 @@ namespace Infraestructure.Repositories
                     _context.Add(cliente);
                 }
 
+                _context.SaveChanges();
+
                 return true;
             }
             catch (Exception ex)
@@ -82,6 +84,8 @@ namespace Infraestructure.Repositories
                 cliente.Ativo = false;
 
                 _context.Update(cliente);
+
+                _context.SaveChanges();
 
                 return true;
             }

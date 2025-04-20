@@ -2,6 +2,8 @@
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AndreSalgados.Controllers
 {
@@ -47,11 +49,14 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
-        public RetornoViewModel SalvarCliente(string dados)
+        public RetornoViewModel SalvarCliente([FromBody] string dados)
         {
             try
             {
-                var cliente = new Cliente(); //Realizar o populate object
+                var jsonObj = JObject.Parse(dados);
+                var cliente = new Cliente();
+                var serializer = new JsonSerializer();
+                serializer.Populate(jsonObj.CreateReader(), cliente);
 
                 cliente.Alteracao = DateTime.Now;
                 cliente.Inclusao = DateTime.Now;
@@ -59,22 +64,13 @@ namespace AndreSalgados.Controllers
 
                 var retorno = _clienteRepository.SalvarCliente(cliente);
 
-                if (retorno)
+                return new RetornoViewModel
                 {
-                    return new RetornoViewModel
-                    {
-                        Sucesso = true,
-                        Mensagem = "Cliente cadastrado com sucesso!"
-                    };
-                }
-                else
-                {
-                    return new RetornoViewModel
-                    {
-                        Sucesso = false,
-                        Mensagem = "Erro ao cadastrar cliente!"
-                    };
-                }  
+                    Sucesso = retorno,
+                    Mensagem = retorno 
+                        ? "Cliente cadastrado com sucesso!" 
+                        : "Erro ao cadastrar cliente!"
+                };  
             }
             catch (Exception ex)
             {
@@ -87,22 +83,13 @@ namespace AndreSalgados.Controllers
         {
             var retorno = _clienteRepository.ExcluirCliente(Id);
 
-            if (retorno)
+            return new RetornoViewModel
             {
-                return new RetornoViewModel
-                {
-                    Sucesso = true,
-                    Mensagem = "Cliente excluido com sucesso!"
-                };
-            }
-            else
-            {
-                return new RetornoViewModel
-                {
-                    Sucesso = false,
-                    Mensagem = "Erro ao excluir cliente!"
-                };
-            }           
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Cliente excluido com sucesso!" 
+                    : "Erro ao excluir cliente!"
+            };
         }
     }
 }

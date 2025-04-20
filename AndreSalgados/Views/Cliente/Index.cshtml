@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Application.Core.Entities.Cliente>
+﻿@using Application.Core.Entities;
+@model IEnumerable<Cliente>
 
 @{
     ViewData["Title"] = "Clientes";
@@ -7,9 +8,9 @@
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mt-4"><i class="fas fa-users me-2"></i>Clientes</h1>
-        <a asp-action="Create" class="btn btn-primary">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal">
             <i class="fas fa-plus me-1"></i> Novo Cliente
-        </a>
+        </button>
     </div>
 
     <div class="card mb-4">
@@ -44,7 +45,7 @@
                                 <td>@Html.DisplayFor(modelItem => item.Endereco)</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <a asp-action="Details" asp-route-id="@item.Id"
+                                        <a asp-action="Detalhes" asp-route-id="@item.Id"
                                            class="btn btn-sm btn-info" title="Detalhes">
                                             <i class="fas fa-eye"></i>
                                         </a>
@@ -59,6 +60,47 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Cadastro de Cliente -->
+<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="clienteModalLabel"><i class="fas fa-user-plus me-2"></i>Novo Cliente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="clienteForm">
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="Nome" class="form-label">Nome</label>
+                            <input type="text" class="form-control" id="Nome" name="Nome" required>
+                            <div class="invalid-feedback">Por favor, informe o nome do cliente.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="Numero" class="form-label">Número</label>
+                            <input type="text" class="form-control" id="Numero" name="Numero" required>
+                            <div class="invalid-feedback">Por favor, informe o número do cliente.</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Endereco" class="form-label">Endereço</label>
+                        <input type="text" class="form-control" id="Endereco" name="Endereco" required>
+                        <div class="invalid-feedback">Por favor, informe o endereço do cliente.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Salvar
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -120,6 +162,64 @@
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             }
+
+            // Validação do formulário no modal
+            $('#clienteForm').submit(function (e) {
+                e.preventDefault();
+
+                var form = this;
+                if (!form.checkValidity()) {
+                    e.stopPropagation();
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                var dados = {
+                    Nome: $('#Nome').val(),
+                    Numero: $('#Numero').val(),
+                    Endereco: $('#Endereco').val()
+                };
+                debugger;
+                $.ajax({
+                    url: '/Cliente/SalvarCliente',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(JSON.stringify(dados)),
+                    success: function (response) {
+                        if (response.sucesso) {
+                            $('#clienteModal').modal('hide');
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Sucesso!',
+                                text: response.mensagem,
+                                showConfirmButton: false,
+                                timer: 1500
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Erro!',
+                                text: response.mensagem
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Erro!',
+                            text: 'Ocorreu um erro ao tentar salvar o cliente.'
+                        });
+                    }
+                });
+            });
+
+            // Resetar o modal quando fechar
+            $('#clienteModal').on('hidden.bs.modal', function () {
+                $('#clienteForm')[0].reset();
+                $('#clienteForm').removeClass('was-validated');
+            });
         });
     </script>
 }
