@@ -1,8 +1,8 @@
 ﻿@using Application.Core.Entities;
-@model Cliente
+@model Pedido
 
 @{
-    ViewData["Title"] = "Detalhes do Cliente";
+    ViewData["Title"] = "Detalhes do Pedido";
 }
 
 <div class="container-fluid px-4">
@@ -12,14 +12,17 @@
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Nome:</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Nome)</dd>
+                <dt class="col-sm-3">Cliente:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Cliente.Nome)</dd>
 
-                <dt class="col-sm-3">Número:</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Numero)</dd>
+                <dt class="col-sm-3">Quantidade Total:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Quantidade)</dd>
 
-                <dt class="col-sm-3">Endereço:</dt>
-                <dd class="col-sm-9">@Html.DisplayFor(model => model.Endereco)</dd>
+                <dt class="col-sm-3">Valor Total:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Valor)</dd>
+
+                <dt class="col-sm-3">Pago:</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Pago)</dd>
 
                 <dt class="col-sm-3">Data de Cadastro:</dt>
                 <dd class="col-sm-9">@Model.Inclusao.ToString("dd/MM/yyyy HH:mm")</dd>
