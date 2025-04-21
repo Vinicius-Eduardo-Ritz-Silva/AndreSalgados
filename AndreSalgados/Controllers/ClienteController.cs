@@ -1,5 +1,9 @@
-﻿using Application.Core.Interfaces.Repositories;
+﻿using AndreSalgados.ViewModels;
+using Application.Core.Entities;
+using Application.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace AndreSalgados.Controllers
 {
@@ -12,9 +16,80 @@ namespace AndreSalgados.Controllers
             _clienteRepository = clienteRepository;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var clientes = await Get();
+
+            return View(clientes);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Detalhes(Guid Id)
+        {
+            var cliente = await GetClienteById(Id);
+
+            return View(cliente);
+        }
+
+        [HttpGet]
+        public async Task<IEnumerable<Cliente>> Get()
+        {
+            var clientes = await _clienteRepository.Get();
+
+            return clientes;
+        }
+
+        [HttpGet]
+        public async Task<Cliente> GetClienteById(Guid Id)
+        {
+            var cliente = await _clienteRepository.GetClienteById(Id);
+
+            return cliente;
+        }
+
+        [HttpPost]
+        public RetornoViewModel SalvarCliente([FromBody] string dados)
+        {
+            try
+            {
+                var jsonObj = JObject.Parse(dados);
+                var cliente = new Cliente();
+                var serializer = new JsonSerializer();
+                serializer.Populate(jsonObj.CreateReader(), cliente);
+
+                cliente.Alteracao = DateTime.Now;
+                cliente.Inclusao = DateTime.Now;
+                cliente.Ativo = true;
+
+                var retorno = _clienteRepository.SalvarCliente(cliente);
+
+                return new RetornoViewModel
+                {
+                    Sucesso = retorno,
+                    Mensagem = retorno 
+                        ? "Cliente cadastrado com sucesso!" 
+                        : "Erro ao cadastrar cliente!"
+                };  
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        [HttpDelete]
+        public RetornoViewModel ExcluirCliente(Guid Id)
+        {
+            var retorno = _clienteRepository.ExcluirCliente(Id);
+
+            return new RetornoViewModel
+            {
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Cliente excluido com sucesso!" 
+                    : "Erro ao excluir cliente!"
+            };
         }
     }
 }
