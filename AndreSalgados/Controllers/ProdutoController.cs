@@ -33,7 +33,7 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Cliente>> Get()
+        public async Task<IEnumerable<Produto>> Get()
         {
             var produto = await _produtoRepository.Get();
 
@@ -41,7 +41,7 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpGet]
-        public async Task<Cliente> GetProdutoById(Guid Id)
+        public async Task<Produto> GetProdutoById(Guid Id)
         {
             var produto = await _produtoRepository.GetProdutoById(Id);
 
