@@ -24,7 +24,7 @@ namespace Infraestructure.Repositories
             try
             {
                 var clientes = await _context.Clientes
-                    .Where(c => c.Ativo == true).ToListAsync();
+                    .Where(c => c.Ativo == true).OrderBy(c => c.Nome).ToListAsync();
 
                 return clientes;
             }
