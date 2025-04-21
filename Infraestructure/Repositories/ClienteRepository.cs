@@ -52,7 +52,7 @@ namespace Infraestructure.Repositories
         {
             try
             {
-                var clienteExistente = _context.Clientes.FirstOrDefault(c => c.Id == cliente.Id);
+                var clienteExistente = _context.Clientes.AsNoTracking().FirstOrDefault(c => c.Id == cliente.Id);
 
                 if (clienteExistente != null)
                 {
