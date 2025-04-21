@@ -24,7 +24,7 @@ namespace Application.Core.Entities
         #region Relacionamentos
 
         [Column("ID_TIPO")]
-        public Guid TipoId { get; set; }
+        public Guid? TipoId { get; set; }
 
         [ForeignKey("TipoId")]
         public virtual TipoProduto Tipo { get; set; }

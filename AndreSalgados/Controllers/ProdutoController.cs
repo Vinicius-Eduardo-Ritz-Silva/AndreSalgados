@@ -68,8 +68,8 @@ namespace AndreSalgados.Controllers
                 {
                     Sucesso = retorno,
                     Mensagem = retorno
-                        ? "Cliente cadastrado com sucesso!"
-                        : "Erro ao cadastrar cliente!"
+                        ? "Produto cadastrado com sucesso!"
+                        : "Erro ao cadastrar produto!"
                 };
             }
             catch (Exception ex)
@@ -87,8 +87,8 @@ namespace AndreSalgados.Controllers
             {
                 Sucesso = retorno,
                 Mensagem = retorno
-                    ? "Cliente excluido com sucesso!"
-                    : "Erro ao excluir cliente!"
+                    ? "Produto excluido com sucesso!"
+                    : "Erro ao excluir produto!"
             };
         }
     }
