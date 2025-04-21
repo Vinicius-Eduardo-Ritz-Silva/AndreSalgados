@@ -44,7 +44,7 @@ namespace Infraestructure.Repositories
             try
             {
                 var produtos = await _context.Produtos
-                    .Where(c => c.Ativo == true).ToListAsync();
+                    .Where(c => c.Ativo == true).OrderBy(c => c.Descricao1).ToListAsync();
 
                 return produtos;
             }
@@ -72,7 +72,7 @@ namespace Infraestructure.Repositories
         {
             try
             {
-                var produtoExistente = _context.Clientes.AsNoTracking().FirstOrDefault(c => c.Id == produto.Id);
+                var produtoExistente = _context.Produtos.AsNoTracking().FirstOrDefault(c => c.Id == produto.Id);
 
                 if (produtoExistente != null)
                 {
