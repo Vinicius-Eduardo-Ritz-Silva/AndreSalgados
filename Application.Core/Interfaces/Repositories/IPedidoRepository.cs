@@ -10,5 +10,7 @@ namespace Application.Core.Interfaces.Repositories
     public interface IPedidoRepository
     {
         public Task<IEnumerable<Pedido>> Get();
+
+        public Task<Pedido> GetPedidoById(Guid Id);
     }
 }

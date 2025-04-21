@@ -33,5 +33,19 @@ namespace Infraestructure.Repositories
                 throw new Exception(ex.Message);
             }
         }
+
+        public async Task<Pedido> GetPedidoById(Guid Id)
+        {
+            try
+            {
+                var pedido = await _context.Pedidos.FirstOrDefaultAsync(c => c.Id == Id);
+
+                return pedido;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
     }
 }
