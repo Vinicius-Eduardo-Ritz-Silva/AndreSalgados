@@ -136,35 +136,44 @@
     <script>
         // Função para salvar o pedido (criação ou edição)
         function salvarPedido() {
-            const pedidoId = '@Model.Id';
-            const clienteId = $('#clienteSelect').val();
-            const pago = $('#pagoCheckbox').is(':checked');
+        debugger;
+        const pedidoId = '@Model.Id';
+        const clienteId = $('#clienteSelect').val();
+        const pago = $('#pagoCheckbox').is(':checked');
 
-            if (!clienteId) {
-                Swal.fire('Atenção', 'Selecione um cliente', 'warning');
-                return;
-            }
+        if (!clienteId) {
+            Swal.fire('Atenção', 'Selecione um cliente', 'warning');
+            return;
+        }
 
-            $.post('/Pedido/SalvarPedido', {
+        $.ajax({
+            url: '/Pedido/SalvarPedido',
+            type: 'POST',
+            data: {
                 Id: pedidoId,
                 ClienteId: clienteId,
                 Pago: pago
-            }, function(response) {
-                if (response.success) {
-                    // Se for um novo pedido, atualiza a URL com o ID gerado
+            },
+            success: function(response) {
+                if (response.sucesso) {
                     if (pedidoId === '00000000-0000-0000-0000-000000000000') {
-                        window.location.href = `/Pedido/Details/${response.pedidoId}`;
+                        window.location.href = `/Pedido/Detalhes/${pedidoId}`;
                     } else {
-                        Swal.fire('Sucesso', 'Pedido salvo com sucesso', 'success');
+                        Swal.fire('Sucesso', response.mensagem, 'success');
                     }
                 } else {
-                    Swal.fire('Erro', response.message, 'error');
+                    Swal.fire('Erro', response.Mensagem, 'error');
                 }
-            });
-        }
+            },
+            error: function() {
+                Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+            }
+        });
+    }
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
         function adicionarProduto(pedidoId, produtoId, produtoNome) {
+            debugger;
             Swal.fire({
                 title: 'Quantidade',
                 input: 'number',
@@ -180,15 +189,15 @@
                 if (result.isConfirmed) {
                     const quantidade = parseInt(result.value);
                     if (quantidade > 0) {
-                        $.post('/Pedido/AddProduto', {
-                            PedidoId: '@Model.Id',
+                        $.post('/Pedido/AdicionarProdutoPedido', {
+                            Id: '@Model.Id',
                             ProdutoId: produtoId,
                             Quantidade: quantidade
                         }, function(response) {
-                            if (response.success) {
+                            if (response.sucesso) {
                                 location.reload();
                             } else {
-                                Swal.fire('Erro', response.message, 'error');
+                                Swal.fire('Erro', response.mensagem, 'error');
                             }
                         });
                     }
@@ -203,7 +212,7 @@
                 Quantidade: quantidade
             }, function(response) {
                 if (!response.success) {
-                    Swal.fire('Erro', response.message, 'error');
+                    Swal.fire('Erro', response.mensagem, 'error');
                     location.reload();
                 }
             });
@@ -221,8 +230,8 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Pedido/RemoveProduto',
-                        type: 'DELETE',
+                        url: '/Pedido/RemoverProdutoPedido',
+                        type: 'POST',
                         data: {
                             pedidoId: '@Model.Id',
                             produtoId: produtoId
@@ -231,7 +240,7 @@
                             if (response.success) {
                                 location.reload();
                             } else {
-                                Swal.fire('Erro', response.message, 'error');
+                                Swal.fire('Erro', response.mensagem, 'error');
                             }
                         }
                     });

@@ -1,4 +1,5 @@
-﻿using Application.Core.Entities;
+﻿using AndreSalgados.ViewModels;
+using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +75,36 @@ namespace AndreSalgados.Controllers
             var pedido = await _pedidoRepository.GetPedidoById(Id);
 
             return pedido;
+        }
+
+        [HttpPost]
+        public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago)
+        {
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = "Implementar Metodo Salvar Pedido"
+            };
+        }
+
+        [HttpPost]
+        public RetornoViewModel AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
+        {
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = "Implementar Metodo Adicionar Produto Pedido"
+            };
+        }
+
+        [HttpPost]
+        public RetornoViewModel RemoverProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
+        {
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = "Implementar Metodo Remover Produto Pedido"
+            };
         }
     }
 }
