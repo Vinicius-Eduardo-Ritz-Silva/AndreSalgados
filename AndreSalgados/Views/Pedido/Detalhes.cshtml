@@ -165,15 +165,78 @@
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
         function adicionarProduto(pedidoId, produtoId, produtoNome) {
-            // Implementação anterior...
+            Swal.fire({
+                title: 'Quantidade',
+                input: 'number',
+                inputValue: 1,
+                inputAttributes: {
+                    min: 1,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Adicionar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const quantidade = parseInt(result.value);
+                    if (quantidade > 0) {
+                        $.post('/Pedido/AddProduto', {
+                            PedidoId: '@Model.Id',
+                            ProdutoId: produtoId,
+                            Quantidade: quantidade
+                        }, function(response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Erro', response.message, 'error');
+                            }
+                        });
+                    }
+                }
+            });
         }
 
         function atualizarQuantidade(pedidoId, produtoId, quantidade) {
-            // Implementação anterior...
+            $.post('/Pedido/UpdateQuantidade', {
+                PedidoId: '@Model.Id',
+                ProdutoId: produtoId,
+                Quantidade: quantidade
+            }, function(response) {
+                if (!response.success) {
+                    Swal.fire('Erro', response.message, 'error');
+                    location.reload();
+                }
+            });
         }
 
         function removerProduto(pedidoId, produtoId) {
-            // Implementação anterior...
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você está prestes a remover este produto do pedido!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, remover!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Pedido/RemoveProduto',
+                        type: 'DELETE',
+                        data: {
+                            pedidoId: '@Model.Id',
+                            produtoId: produtoId
+                        },
+                        success: function(response) {
+                            if (response.success) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Erro', response.message, 'error');
+                            }
+                        }
+                    });
+                }
+            });
         }
 
         // Se for um novo pedido, focar no campo de cliente
