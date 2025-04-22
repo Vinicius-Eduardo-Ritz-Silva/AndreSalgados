@@ -2,7 +2,12 @@
 @model Pedido
 
 @{
-    ViewData["Title"] = Model.Id == Guid.Empty ? "Novo Pedido" : "Editar Pedido";
+    var pedidoId = Model.Id == Guid.Empty && TempData.ContainsKey("NovoPedidoId")
+        ? (Guid)TempData["NovoPedidoId"]
+        : Model.Id;
+
+    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido #{pedidoId.ToString().Substring(0, 8)}";
+
     var produtosPedido = ViewBag.ProdutosPedido as IEnumerable<ProdutoPedido> ?? new List<ProdutoPedido>();
     var produtosDisponiveis = ViewBag.ProdutosDisponiveis as IEnumerable<Produto>;
     var clientes = ViewBag.Clientes as IEnumerable<Cliente>;
@@ -21,7 +26,7 @@
                     {
                         <li class="nav-item">
                             <button class="nav-link text-dark"
-                                    onclick="adicionarProduto('@Model.Id', '@produto.Id', '@produto.Descricao1')">
+                                    onclick="adicionarProduto('@pedidoId', '@produto.Id', '@produto.Descricao1')">
                                 @produto.Descricao1
                             </button>
                         </li>
@@ -111,13 +116,13 @@
                                             <input type="number" value="@item.Quantidade"
                                                    class="form-control quantidade"
                                                    style="width: 80px;"
-                                                   onchange="atualizarQuantidade('@Model.Id', '@item.ProdutoId', this.value)">
+                                                   onchange="atualizarQuantidade('@pedidoId', '@item.ProdutoId', this.value)">
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@((item.Quantidade * item.Valor).ToString("C"))</td>
                                         <td>
                                             <button class="btn btn-sm btn-danger"
-                                                    onclick="removerProduto('@Model.Id', '@item.ProdutoId')">
+                                                    onclick="removerProduto('@pedidoId', '@item.ProdutoId')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -137,7 +142,7 @@
         // Função para salvar o pedido (criação ou edição)
         function salvarPedido() {
         debugger;
-        const pedidoId = '@Model.Id';
+        const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
         const clienteId = $('#clienteSelect').val();
         const pago = $('#pagoCheckbox').is(':checked');
 
@@ -156,8 +161,11 @@
             },
             success: function(response) {
                 if (response.sucesso) {
-                    if (pedidoId === '00000000-0000-0000-0000-000000000000') {
-                        window.location.href = `/Pedido/Detalhes/${pedidoId}`;
+
+                    if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
+
+                        window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
+
                     } else {
                         Swal.fire('Sucesso', response.mensagem, 'success');
                     }
@@ -190,7 +198,7 @@
                     const quantidade = parseInt(result.value);
                     if (quantidade > 0) {
                         $.post('/Pedido/AdicionarProdutoPedido', {
-                            Id: '@Model.Id',
+                            Id: '@pedidoId',
                             ProdutoId: produtoId,
                             Quantidade: quantidade
                         }, function(response) {
@@ -207,7 +215,7 @@
 
         function atualizarQuantidade(pedidoId, produtoId, quantidade) {
             $.post('/Pedido/UpdateQuantidade', {
-                PedidoId: '@Model.Id',
+                    PedidoId: '@pedidoId',
                 ProdutoId: produtoId,
                 Quantidade: quantidade
             }, function(response) {
@@ -233,7 +241,7 @@
                         url: '/Pedido/RemoverProdutoPedido',
                         type: 'POST',
                         data: {
-                            pedidoId: '@Model.Id',
+                            pedidoId: '@pedidoId',
                             produtoId: produtoId
                         },
                         success: function(response) {
@@ -250,7 +258,7 @@
 
         // Se for um novo pedido, focar no campo de cliente
         $(document).ready(function() {
-            if ('@Model.Id' === '00000000-0000-0000-0000-000000000000') {
+                if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
                 $('#clienteSelect').focus();
             }
         });

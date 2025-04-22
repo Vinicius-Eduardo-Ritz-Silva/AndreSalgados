@@ -35,27 +35,35 @@ namespace AndreSalgados.Controllers
         [HttpGet]
         public async Task<IActionResult> Detalhes(Guid Id)
         {
-            if(Id == Guid.Empty)
+            var produtos = await _produtoRepository.Get();
+            var clientes = await _clienteRepository.Get();
+
+            ViewBag.ProdutosDisponiveis = produtos;
+            ViewBag.ProdutosPedido = new List<ProdutoPedido>();
+            ViewBag.Clientes = clientes;
+
+            if (Id == Guid.Empty)
             {
-                var novoPedido = new Pedido();
-                var produtos = await _produtoRepository.Get();
-                var clientes = await _clienteRepository.Get();
+                var sessionPedidoId = HttpContext.Session.GetString("NovoPedidoId");
 
-                ViewBag.ProdutosDisponiveis = produtos;
-                ViewBag.ProdutosPedido = new List<ProdutoPedido>();
-                ViewBag.Clientes = clientes;
+                if (!string.IsNullOrEmpty(sessionPedidoId))
+                {
+                    var novoPedido = new Pedido { Id = Guid.Parse(sessionPedidoId) };
 
-                return View(novoPedido);
+                    return View(novoPedido);
+                }
+                else
+                {
+                    var novoPedido = new Pedido();
+
+                    HttpContext.Session.SetString("NovoPedidoId", novoPedido.Id.ToString());
+
+                    return View(novoPedido);
+                }
             }
             else
             {
                 var pedido = await GetPedidoById(Id);
-                var produtos = await _produtoRepository.Get();
-                var clientes = await _clienteRepository.Get();
-
-                ViewBag.ProdutosDisponiveis = produtos;
-                ViewBag.ProdutosPedido = new List<ProdutoPedido>();
-                ViewBag.Clientes = clientes;
 
                 return View(pedido);
             }
@@ -90,6 +98,8 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
         {
+
+
             return new RetornoViewModel
             {
                 Sucesso = true,
