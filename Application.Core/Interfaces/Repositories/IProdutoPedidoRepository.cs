@@ -9,5 +9,6 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IProdutoPedidoRepository
     {
+        public bool AdicionarProdutoPedido(Guid PedidoId, Guid ProdutoId, int Quantidade);
     }
 }

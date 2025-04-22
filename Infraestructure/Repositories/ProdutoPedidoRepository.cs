@@ -18,6 +18,28 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
-        //Metodos aqui
+        public bool AdicionarProdutoPedido(Guid PedidoId, Guid ProdutoId, int Quantidade)
+        {
+            try
+            {
+                var produtoPedido = new ProdutoPedido();
+
+                produtoPedido.Inclusao = DateTime.Now;
+                produtoPedido.Alteracao = DateTime.Now;
+                produtoPedido.Ativo = true;
+                produtoPedido.PedidoId = PedidoId;
+                produtoPedido.ProdutoId = ProdutoId;
+                produtoPedido.Quantidade = Quantidade;
+
+                _context.Add(produtoPedido);
+                //_context.SaveChanges(); //Concertar erro de chave estrangeira
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

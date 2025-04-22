@@ -98,12 +98,14 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
         {
-
+            var retorno = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
 
             return new RetornoViewModel
             {
-                Sucesso = true,
-                Mensagem = "Implementar Metodo Adicionar Produto Pedido"
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Produto vinculado ao pedido com sucesso!" 
+                    : "Erro ao vincular produto ao pedido!"
             };
         }
 
