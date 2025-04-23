@@ -12,6 +12,7 @@ builder.Services.AddDbContext<VrContext>(options =>
 
 #region Interfaces e Repositories
 
+builder.Services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<ICobrancaRepository, CobrancaRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
