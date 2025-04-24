@@ -11,21 +11,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class MainRepository<T> : IMainRepository<T> where T : class
+    public class MainRepository<T> : IMainRepository<T> where T : MainModel
     {
         private readonly VrContext _context;
+        protected readonly DbSet<T> _dbSet;
 
         public MainRepository(VrContext context)
         {
             _context = context;
+            _dbSet = context.Set<T>();
         }
-        public async Task<IEnumerable<T>> Get(Expression<Func<T, bool>> lambda)
+
+        public async Task<IEnumerable<T>> Get()
         {
             try
             {
-                var entity = await _context.Set<T>()
-                    .Where(lambda).AsNoTracking().ToListAsync();
-                    //.Where(c => c.Ativo == true).OrderBy(c => c.Cliente.Nome).ToListAsync();
+                var entities = await _dbSet
+                    .Where(c => c.Ativo)
+                    .AsNoTracking()
+                    .ToListAsync();
+
+                return entities;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<T> GetById(Guid Id)
+        {
+            try
+            {
+                var entity = await _dbSet
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == Id);
 
                 return entity;
             }
@@ -35,11 +55,54 @@ namespace Infraestructure.Repositories
             }
         }
 
-        //public async Task<IEnumerable<T>> GetAtivos()
-        //{
-        //    var entity = await _context.Set<T>().AsNoTracking().ToListAsync(); ;
+        public async Task<bool> InsertOrReplace(T Entity)
+        {
+            try
+            {
+                var oldEntity = await _dbSet
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == Entity.Id);
 
-        //    Get(t=>t.Ativo == true);
-        //}
+                if (oldEntity != null)
+                {
+                    Entity.Inclusao = oldEntity.Inclusao;
+
+                    _dbSet.Update(Entity);
+                }
+                else
+                {
+                    await _dbSet.AddAsync(Entity);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Excluir(Guid Id)
+        {
+            try
+            {
+                var entity = await _dbSet
+                    .FirstOrDefaultAsync(c => c.Id == Id);
+
+                entity.Ativo = false;
+
+                _dbSet.Update(entity);
+
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

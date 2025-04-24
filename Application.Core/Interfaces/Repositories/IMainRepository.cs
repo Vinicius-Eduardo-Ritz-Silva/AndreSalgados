@@ -8,10 +8,14 @@ using Application.Core.Entities;
 
 namespace Application.Core.Interfaces.Repositories
 {
-    public interface IMainRepository<T> where T : class
+    public interface IMainRepository<T> where T : MainModel
     {
-        public Task<IEnumerable<T>> Get(Expression<Func<T, bool>> lambda);
+        public Task<IEnumerable<T>> Get();
 
-        //public Task<IEnumerable<T>> GetAtivos();
+        public Task<T> GetById(Guid Id);
+
+        public Task<bool> InsertOrReplace(T Entity);
+
+        public Task<bool> Excluir(Guid Id);
     }
 }
