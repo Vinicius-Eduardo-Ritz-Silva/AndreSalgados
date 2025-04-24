@@ -93,6 +93,7 @@ namespace AndreSalgados.Controllers
             pedido.Id = Id;
             pedido.Inclusao = DateTime.Now;
             pedido.Alteracao = DateTime.Now;
+            pedido.Ativo = true;
             pedido.ClienteId = ClienteId;
             pedido.Pago = Pago;
 

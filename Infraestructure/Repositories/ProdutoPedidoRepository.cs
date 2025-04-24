@@ -32,7 +32,7 @@ namespace Infraestructure.Repositories
                 produtoPedido.Quantidade = Quantidade;
 
                 _context.Add(produtoPedido);
-                //_context.SaveChanges(); //Concertar erro de chave estrangeira
+                _context.SaveChanges(); //Concertar erro de chave estrangeira
 
                 return true;
             }

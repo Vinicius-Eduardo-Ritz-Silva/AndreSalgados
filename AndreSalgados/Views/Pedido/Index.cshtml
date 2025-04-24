@@ -172,7 +172,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Produto/ExcluirProduto',
+                        url: '/Pedido/ExcluirPedido',
                         type: 'DELETE',
                         data: { id: id },
                         success: function (response) {
