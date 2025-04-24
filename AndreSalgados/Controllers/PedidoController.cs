@@ -39,11 +39,12 @@ namespace AndreSalgados.Controllers
             var clientes = await _clienteRepository.Get();
 
             ViewBag.ProdutosDisponiveis = produtos.OrderBy(p => p.Descricao1);
-            ViewBag.ProdutosPedido = new List<ProdutoPedido>();
             ViewBag.Clientes = clientes.OrderBy(c => c.Nome);
 
             if (Id == Guid.Empty)
             {
+                ViewBag.ProdutosPedido = new List<ProdutoPedido>();
+
                 var sessionPedidoId = HttpContext.Session.GetString("NovoPedidoId");
 
                 if (!string.IsNullOrEmpty(sessionPedidoId))
@@ -63,6 +64,8 @@ namespace AndreSalgados.Controllers
             }
             else
             {
+                ViewBag.ProdutosPedido = _produtoPedidoRepository.GetProdutoByPedido(Id);
+
                 var pedido = await GetPedidoById(Id);
 
                 return View(pedido);

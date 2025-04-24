@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
@@ -31,6 +32,10 @@ namespace Infraestructure.Repositories
                 produtoPedido.ProdutoId = ProdutoId;
                 produtoPedido.Quantidade = Quantidade;
 
+                produtoPedido.Valor = _context.Produtos
+                    .Where(p => p.Id == ProdutoId).AsNoTracking()
+                    .Select(p => p.Preco).FirstOrDefault();
+
                 _context.Add(produtoPedido);
                 _context.SaveChanges(); //Concertar erro de chave estrangeira
 
@@ -39,6 +44,24 @@ namespace Infraestructure.Repositories
             catch
             {
                 return false;
+            }
+        }
+
+        public IEnumerable<ProdutoPedido> GetProdutoByPedido(Guid PedidoId)
+        {
+            try
+            {
+                var produtosPedidos = _context.ProdutosPedidos
+                    .Where(pp => pp.PedidoId == PedidoId)
+                    .Include(pp => pp.Produto)
+                    .AsNoTracking()
+                    .ToList();
+
+                return produtosPedidos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }
