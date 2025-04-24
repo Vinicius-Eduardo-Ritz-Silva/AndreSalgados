@@ -47,5 +47,21 @@ namespace Infraestructure.Repositories
                 throw new Exception(ex.Message);
             }
         }
+
+        public bool SalvarPedido(Pedido pedido)
+        {
+            try
+            {
+                _context.Add(pedido);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

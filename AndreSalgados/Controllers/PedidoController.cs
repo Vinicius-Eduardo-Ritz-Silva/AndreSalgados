@@ -38,9 +38,9 @@ namespace AndreSalgados.Controllers
             var produtos = await _produtoRepository.Get();
             var clientes = await _clienteRepository.Get();
 
-            ViewBag.ProdutosDisponiveis = produtos;
+            ViewBag.ProdutosDisponiveis = produtos.OrderBy(p => p.Descricao1);
             ViewBag.ProdutosPedido = new List<ProdutoPedido>();
-            ViewBag.Clientes = clientes;
+            ViewBag.Clientes = clientes.OrderBy(c => c.Nome);
 
             if (Id == Guid.Empty)
             {
@@ -88,10 +88,27 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago)
         {
+            var pedido = new Pedido();
+
+            pedido.Id = Id;
+            pedido.Inclusao = DateTime.Now;
+            pedido.Alteracao = DateTime.Now;
+            pedido.ClienteId = ClienteId;
+            pedido.Pago = Pago;
+
+            var retorno = _pedidoRepository.SalvarPedido(pedido);
+
+            if (!Pago)
+            {
+                var cobranca = new Cobranca();
+
+                pedido.CobrancaId = cobranca.Id;
+            }
+            
             return new RetornoViewModel
             {
-                Sucesso = true,
-                Mensagem = "Implementar Metodo Salvar Pedido"
+                Sucesso = retorno,
+                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
             };
         }
 
