@@ -37,7 +37,15 @@ namespace Infraestructure.Repositories
                     .Select(p => p.Preco).FirstOrDefault();
 
                 _context.Add(produtoPedido);
-                _context.SaveChanges(); //Concertar erro de chave estrangeira
+
+                var pedido = _context.Pedidos.FirstOrDefault(p => p.Id == PedidoId);
+
+                pedido.Quantidade += produtoPedido.Quantidade;
+                pedido.Valor += produtoPedido.SubTotal;
+
+                _context.Update(pedido);
+
+                _context.SaveChanges();
 
                 return true;
             }
@@ -74,6 +82,13 @@ namespace Infraestructure.Repositories
                 produtoPedido.Ativo = false;
 
                 _context.Update(produtoPedido);
+
+                var pedido = _context.Pedidos.FirstOrDefault(p => p.Id == produtoPedido.PedidoId);
+
+                pedido.Quantidade -= produtoPedido.Quantidade;
+                pedido.Valor -= produtoPedido.SubTotal;
+
+                _context.Update(pedido);
 
                 _context.SaveChanges();
 

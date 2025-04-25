@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
+using Azure;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -52,7 +53,21 @@ namespace Infraestructure.Repositories
         {
             try
             {
-                _context.Add(pedido);
+                if (!pedido.Pago)
+                {
+                    var cobranca = new Cobranca();
+
+                    pedido.CobrancaId = cobranca.Id;
+                }
+
+                var pedidoExistente = _context.Pedidos.AsNoTracking()
+                    .FirstOrDefault(p => p.Id == pedido.Id);
+
+                if (pedidoExistente == null)
+                    _context.Add(pedido);
+
+                else
+                    _context.Update(pedido);
 
                 _context.SaveChanges();
 

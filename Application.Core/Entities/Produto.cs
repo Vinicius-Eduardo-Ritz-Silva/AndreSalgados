@@ -5,7 +5,7 @@ namespace Application.Core.Entities
     [Table("VR_PRODUTO")]
     public class Produto : MainModel
     {
-        #region Propriedades
+        #region -> Propriedades
 
         [Column("NM_NOMEPROD")]
         public string Descricao1 { get; set; }
@@ -21,7 +21,7 @@ namespace Application.Core.Entities
 
         #endregion
 
-        #region Relacionamentos
+        #region -> Relacionamentos
 
         [Column("ID_TIPO")]
         public Guid? TipoId { get; set; }

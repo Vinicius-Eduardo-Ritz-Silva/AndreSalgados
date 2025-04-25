@@ -101,13 +101,6 @@ namespace AndreSalgados.Controllers
             pedido.Pago = Pago;
 
             var retorno = _pedidoRepository.SalvarPedido(pedido);
-
-            if (!Pago)
-            {
-                var cobranca = new Cobranca();
-
-                pedido.CobrancaId = cobranca.Id;
-            }
             
             return new RetornoViewModel
             {
@@ -137,8 +130,8 @@ namespace AndreSalgados.Controllers
 
             return new RetornoViewModel
             {
-                Sucesso = true,
-                Mensagem = "Implementar Metodo Remover Produto Pedido"
+                Sucesso = retorno,
+                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
             };
         }
     }
