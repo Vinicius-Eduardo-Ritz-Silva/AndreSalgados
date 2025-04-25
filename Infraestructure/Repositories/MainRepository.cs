@@ -39,6 +39,25 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<T>> GetWithInclude(params Expression<Func<T, object>>[] includes)
+        {
+            try
+            {
+                var entities = _dbSet.Where(c => c.Ativo).AsNoTracking();
+
+                foreach (var include in includes)
+                {
+                    entities = entities.Include(include);
+                }
+
+                return await entities.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<T> GetById(Guid Id)
         {
             try

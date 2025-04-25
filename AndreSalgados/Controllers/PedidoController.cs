@@ -75,9 +75,9 @@ namespace AndreSalgados.Controllers
         [HttpGet]
         public async Task<IEnumerable<Pedido>> Get()
         {
-            var pedido = await _pedidoRepository.Get();
+            var pedido = await _pedidoRepository.GetWithInclude(p => p.Cliente);
 
-            return pedido;
+            return pedido.OrderBy(p => p.Cliente.Nome);
         }
 
         [HttpGet]

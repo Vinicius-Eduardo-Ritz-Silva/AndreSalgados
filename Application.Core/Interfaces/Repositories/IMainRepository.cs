@@ -12,6 +12,8 @@ namespace Application.Core.Interfaces.Repositories
     {
         public Task<IEnumerable<T>> Get();
 
+        public Task<IEnumerable<T>> GetWithInclude(params Expression<Func<T, object>>[] includes);
+
         public Task<T> GetById(Guid Id);
 
         public Task<bool> InsertOrReplace(T Entity);

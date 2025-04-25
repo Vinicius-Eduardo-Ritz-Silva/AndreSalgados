@@ -11,16 +11,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class PedidoRepository : IPedidoRepository
+    public class PedidoRepository : MainRepository<Pedido>, IPedidoRepository
     {
         private readonly VrContext _context;
 
-        public PedidoRepository(VrContext context) 
+        public PedidoRepository(VrContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Pedido>> Get()
+        public async Task<IEnumerable<Pedido>> GetPedido()
         {
             try
             {
