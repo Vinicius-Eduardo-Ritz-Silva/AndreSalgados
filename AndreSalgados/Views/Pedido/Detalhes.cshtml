@@ -26,7 +26,7 @@
                     {
                         <li class="nav-item">
                             <button class="nav-link text-dark"
-                                    onclick="adicionarProduto('@pedidoId', '@produto.Id', '@produto.Descricao1')">
+                                    onclick="adicionarProduto('@produto.Id')">
                                 @produto.Descricao1
                             </button>
                         </li>
@@ -116,13 +116,13 @@
                                             <input type="number" value="@item.Quantidade"
                                                    class="form-control quantidade"
                                                    style="width: 80px;"
-                                                   onchange="atualizarQuantidade('@pedidoId', '@item.ProdutoId', this.value)">
+                                                   onchange="atualizarQuantidade('@item.ProdutoId', this.value)">
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@((item.Quantidade * item.Valor).ToString("C"))</td>
                                         <td>
                                             <button class="btn btn-sm btn-danger"
-                                                    onclick="removerProduto('@pedidoId', '@item.ProdutoId')">
+                                                    onclick="removerProduto('@item.Id')">
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -180,7 +180,7 @@
     }
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
-        function adicionarProduto(pedidoId, produtoId, produtoNome) {
+        function adicionarProduto(produtoId) {
             debugger;
             Swal.fire({
                 title: 'Quantidade',
@@ -213,7 +213,7 @@
             });
         }
 
-        function atualizarQuantidade(pedidoId, produtoId, quantidade) {
+        function atualizarQuantidade(produtoId, quantidade) {
             $.post('/Pedido/UpdateQuantidade', {
                     PedidoId: '@pedidoId',
                 ProdutoId: produtoId,
@@ -226,7 +226,7 @@
             });
         }
 
-        function removerProduto(pedidoId, produtoId) {
+        function removerProduto(Id) {
             Swal.fire({
                 title: 'Tem certeza?',
                 text: "Você está prestes a remover este produto do pedido!",
@@ -241,11 +241,10 @@
                         url: '/Pedido/RemoverProdutoPedido',
                         type: 'POST',
                         data: {
-                            pedidoId: '@pedidoId',
-                            produtoId: produtoId
+                            Id: Id
                         },
                         success: function(response) {
-                            if (response.success) {
+                            if (response.sucesso) {
                                 location.reload();
                             } else {
                                 Swal.fire('Erro', response.mensagem, 'error');

@@ -131,8 +131,10 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
-        public RetornoViewModel RemoverProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
+        public RetornoViewModel RemoverProdutoPedido(Guid Id)
         {
+            var retorno = _produtoPedidoRepository.RemoverProdutoPedido(Id);
+
             return new RetornoViewModel
             {
                 Sucesso = true,

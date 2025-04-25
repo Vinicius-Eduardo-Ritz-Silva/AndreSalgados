@@ -52,7 +52,7 @@ namespace Infraestructure.Repositories
             try
             {
                 var produtosPedidos = _context.ProdutosPedidos
-                    .Where(pp => pp.PedidoId == PedidoId)
+                    .Where(pp => pp.PedidoId == PedidoId && pp.Ativo)
                     .Include(pp => pp.Produto)
                     .AsNoTracking()
                     .ToList();
@@ -62,6 +62,26 @@ namespace Infraestructure.Repositories
             catch (Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public bool RemoverProdutoPedido(Guid Id)
+        {
+            try
+            {
+                var produtoPedido = _context.ProdutosPedidos.FirstOrDefault(pp => pp.Id == Id);
+
+                produtoPedido.Ativo = false;
+
+                _context.Update(produtoPedido);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
         }
     }

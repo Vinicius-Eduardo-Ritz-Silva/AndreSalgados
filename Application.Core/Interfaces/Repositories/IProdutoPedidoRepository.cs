@@ -12,5 +12,7 @@ namespace Application.Core.Interfaces.Repositories
         public bool AdicionarProdutoPedido(Guid PedidoId, Guid ProdutoId, int Quantidade);
 
         public IEnumerable<ProdutoPedido> GetProdutoByPedido(Guid PedidoId);
+
+        public bool RemoverProdutoPedido(Guid Id);
     }
 }
