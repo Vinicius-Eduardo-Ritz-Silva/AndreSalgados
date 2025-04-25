@@ -116,7 +116,7 @@
                                             <input type="number" value="@item.Quantidade"
                                                    class="form-control quantidade"
                                                    style="width: 80px;"
-                                                   onchange="atualizarQuantidade('@item.ProdutoId', this.value)">
+                                                   onchange="atualizarQuantidade('@item.Id', this.value)"> <!-- Checkpoint -->
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@(item.SubTotal.ToString("C"))</td>
@@ -213,14 +213,16 @@
             });
         }
 
-        function atualizarQuantidade(produtoId, quantidade) {
-            $.post('/Pedido/UpdateQuantidade', {
-                    PedidoId: '@pedidoId',
-                ProdutoId: produtoId,
-                Quantidade: quantidade
+        function atualizarQuantidade(Id, quantidade) {
+            $.post('/Pedido/AtualizarQuantidadeProdutoPedido', {
+                    Id: Id,
+                    Quantidade: quantidade
             }, function(response) {
-                if (!response.success) {
+                if (!response.sucesso) {
                     Swal.fire('Erro', response.mensagem, 'error');
+                    location.reload();
+                }
+                else {
                     location.reload();
                 }
             });

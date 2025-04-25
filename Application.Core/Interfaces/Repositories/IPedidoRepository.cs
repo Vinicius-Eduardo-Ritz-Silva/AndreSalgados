@@ -9,7 +9,7 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IPedidoRepository : IMainRepository<Pedido>
     {
-        public Task<IEnumerable<Pedido>> Get();
+        public Task<IEnumerable<Pedido>> GetPedidos();
 
         public Task<Pedido> GetPedidoById(Guid Id);
 

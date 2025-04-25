@@ -55,6 +55,39 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public bool AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade)
+        {
+            try
+            {
+                var produtoPedido = _context.ProdutosPedidos.FirstOrDefault(pp => pp.Id == Id);
+                var pedido = _context.Pedidos.FirstOrDefault(p => p.Id == produtoPedido.PedidoId);
+
+                if (produtoPedido.Quantidade > Quantidade)
+                {
+                    pedido.Quantidade -= (produtoPedido.Quantidade - Quantidade);
+                    pedido.Valor -= (produtoPedido.SubTotal - (Quantidade * produtoPedido.Valor));
+                }
+                else if (produtoPedido.Quantidade < Quantidade)
+                {
+                    pedido.Quantidade += (Quantidade - produtoPedido.Quantidade);
+                    pedido.Valor += ((Quantidade * produtoPedido.Valor) - produtoPedido.SubTotal);
+                }
+
+                produtoPedido.Quantidade = Quantidade;
+
+                _context.Update(produtoPedido);
+                _context.Update(pedido);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
         public IEnumerable<ProdutoPedido> GetProdutoByPedido(Guid PedidoId)
         {
             try

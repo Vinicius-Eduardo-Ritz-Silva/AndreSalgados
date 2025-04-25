@@ -124,6 +124,20 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
+        public RetornoViewModel AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade)
+        {
+            var retorno = _produtoPedidoRepository.AtualizarQuantidadeProdutoPedido(Id, Quantidade);
+
+            return new RetornoViewModel
+            {
+                Sucesso = retorno,
+                Mensagem = retorno
+                    ? "Produto vinculado ao pedido com sucesso!"
+                    : "Erro ao vincular produto ao pedido!"
+            };
+        }
+
+        [HttpPost]
         public RetornoViewModel RemoverProdutoPedido(Guid Id)
         {
             var retorno = _produtoPedidoRepository.RemoverProdutoPedido(Id);

@@ -20,7 +20,7 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Pedido>> GetPedido()
+        public async Task<IEnumerable<Pedido>> GetPedidos()
         {
             try
             {

@@ -14,5 +14,7 @@ namespace Application.Core.Interfaces.Repositories
         public IEnumerable<ProdutoPedido> GetProdutoByPedido(Guid PedidoId);
 
         public bool RemoverProdutoPedido(Guid Id);
+
+        public bool AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade);
     }
 }
