@@ -173,8 +173,8 @@
                 if (result.isConfirmed) {
                     $.ajax({
                         url: '/Pedido/ExcluirPedido',
-                        type: 'DELETE',
-                        data: { id: id },
+                        type: 'POST',
+                        data: { Id: id },
                         success: function (response) {
                             if (response.sucesso) {
                                 Swal.fire(

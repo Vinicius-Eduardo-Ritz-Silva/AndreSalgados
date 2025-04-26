@@ -16,5 +16,7 @@ namespace Application.Core.Interfaces.Repositories
         public bool RemoverProdutoPedido(Guid Id);
 
         public bool AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade);
+
+        public bool ProdutoExisteNoPedido(Guid PedidoId, Guid ProdutoId);
     }
 }

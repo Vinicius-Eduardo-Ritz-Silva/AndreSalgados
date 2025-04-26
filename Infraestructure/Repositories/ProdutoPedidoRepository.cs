@@ -106,6 +106,21 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public bool ProdutoExisteNoPedido(Guid PedidoId, Guid ProdutoId)
+        {
+            try
+            {
+                var retorno = _context.ProdutosPedidos
+                .Any(pp => pp.PedidoId == PedidoId && pp.ProdutoId == ProdutoId && pp.Ativo);
+
+                return retorno;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public bool RemoverProdutoPedido(Guid Id)
         {
             try

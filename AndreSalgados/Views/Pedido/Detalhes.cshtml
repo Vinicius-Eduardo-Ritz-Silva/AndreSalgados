@@ -176,6 +176,18 @@
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
         function adicionarProduto(produtoId) {
+            const produtoExistente = $(`tr[data-produto-id="${produtoId}"]`).length > 0;
+    
+            if (produtoExistente) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Produto já adicionado',
+                    text: 'Este produto já está no pedido. Você pode atualizar a quantidade diretamente na tabela.',
+                    confirmButtonText: 'Entendi'
+                });
+                return;
+            }
+
             Swal.fire({
                 title: 'Quantidade',
                 input: 'number',

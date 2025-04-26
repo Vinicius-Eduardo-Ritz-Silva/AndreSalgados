@@ -118,6 +118,17 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
         {
+            var produtoExistente = _produtoPedidoRepository.ProdutoExisteNoPedido(Id, ProdutoId);
+
+            if (produtoExistente)
+            {
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Este produto já está no pedido. Atualize a quantidade se necessário."
+                };
+            }
+
             var retorno = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
 
             return new RetornoViewModel
@@ -147,6 +158,18 @@ namespace AndreSalgados.Controllers
         public RetornoViewModel RemoverProdutoPedido(Guid Id)
         {
             var retorno = _produtoPedidoRepository.RemoverProdutoPedido(Id);
+
+            return new RetornoViewModel
+            {
+                Sucesso = retorno,
+                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
+            };
+        }
+
+        [HttpPost]
+        public async Task<RetornoViewModel> ExcluirPedido(Guid Id)
+        {
+            var retorno = await _pedidoRepository.Excluir(Id);
 
             return new RetornoViewModel
             {
