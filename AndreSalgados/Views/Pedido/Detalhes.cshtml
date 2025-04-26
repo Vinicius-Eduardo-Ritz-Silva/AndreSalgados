@@ -163,13 +163,7 @@
                 success: function(response) {
                     if (response.sucesso) {
 
-                        if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
-
-                            window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
-
-                        } else {
-                            Swal.fire('Sucesso', response.mensagem, 'success');
-                        }
+                        window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
                     } else {
                         Swal.fire('Erro', response.Mensagem, 'error');
                     }

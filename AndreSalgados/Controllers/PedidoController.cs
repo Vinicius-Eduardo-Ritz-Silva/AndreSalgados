@@ -105,7 +105,13 @@ namespace AndreSalgados.Controllers
             return new RetornoViewModel
             {
                 Sucesso = retorno,
-                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
+                Mensagem = retorno 
+                    ? "Pedido salvo com sucesso!" 
+                    : "Erro ao salvar pedido!",
+                Dados = new
+                {
+                    pedidoId = pedido.Id
+                }
             };
         }
 
