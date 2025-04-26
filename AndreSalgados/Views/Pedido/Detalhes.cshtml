@@ -116,7 +116,9 @@
                                             <input type="number" value="@item.Quantidade"
                                                    class="form-control quantidade"
                                                    style="width: 80px;"
-                                                   onchange="atualizarQuantidade('@item.Id', this.value)"> <!-- Checkpoint -->
+                                                   min="1"
+                                                   onchange="atualizarQuantidade('@item.Id', this.value)"
+                                                   oninput="validaQuantidade(this)">
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@(item.SubTotal.ToString("C"))</td>
@@ -141,47 +143,45 @@
     <script>
         // Função para salvar o pedido (criação ou edição)
         function salvarPedido() {
-        debugger;
-        const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
-        const clienteId = $('#clienteSelect').val();
-        const pago = $('#pagoCheckbox').is(':checked');
+            const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
+            const clienteId = $('#clienteSelect').val();
+            const pago = $('#pagoCheckbox').is(':checked');
 
-        if (!clienteId) {
-            Swal.fire('Atenção', 'Selecione um cliente', 'warning');
-            return;
-        }
-
-        $.ajax({
-            url: '/Pedido/SalvarPedido',
-            type: 'POST',
-            data: {
-                Id: pedidoId,
-                ClienteId: clienteId,
-                Pago: pago
-            },
-            success: function(response) {
-                if (response.sucesso) {
-
-                    if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
-
-                        window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
-
-                    } else {
-                        Swal.fire('Sucesso', response.mensagem, 'success');
-                    }
-                } else {
-                    Swal.fire('Erro', response.Mensagem, 'error');
-                }
-            },
-            error: function() {
-                Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+            if (!clienteId) {
+                Swal.fire('Atenção', 'Selecione um cliente', 'warning');
+                return;
             }
-        });
-    }
+
+            $.ajax({
+                url: '/Pedido/SalvarPedido',
+                type: 'POST',
+                data: {
+                    Id: pedidoId,
+                    ClienteId: clienteId,
+                    Pago: pago
+                },
+                success: function(response) {
+                    if (response.sucesso) {
+
+                        if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
+
+                            window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
+
+                        } else {
+                            Swal.fire('Sucesso', response.mensagem, 'success');
+                        }
+                    } else {
+                        Swal.fire('Erro', response.Mensagem, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+                }
+            });
+        }
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
         function adicionarProduto(produtoId) {
-            debugger;
             Swal.fire({
                 title: 'Quantidade',
                 input: 'number',
@@ -213,7 +213,24 @@
             });
         }
 
+        function validaQuantidade(input) {
+            debugger;
+            if (input.value < 1) {
+                input.value = 1;
+            }
+    
+            input.value = input.value.replace(/[^0-9]/g, '');
+    
+            input.value = parseInt(input.value) || 1;
+        }
+
         function atualizarQuantidade(Id, quantidade) {
+            quantidade = parseInt(quantidade);
+            if (isNaN(quantidade) || quantidade < 1) {
+                Swal.fire('Atenção', 'A quantidade deve ser maior que zero', 'warning');
+                return;
+            }
+
             $.post('/Pedido/AtualizarQuantidadeProdutoPedido', {
                     Id: Id,
                     Quantidade: quantidade
