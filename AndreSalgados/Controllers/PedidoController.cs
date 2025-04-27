@@ -171,7 +171,9 @@ namespace AndreSalgados.Controllers
 
             if (!pedido.Pago)
             {
-                var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
+                var pedidoCobrado = await _pedidoRepository.GetById(Id);
+
+                var retornoValidar = _cobrancaRepository.GerarCobranca(pedidoCobrado);
 
                 if (!retornoValidar)
                     return new RetornoViewModel

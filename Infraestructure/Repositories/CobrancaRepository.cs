@@ -44,7 +44,7 @@ namespace Infraestructure.Repositories
                     cobrancaExistente.Valor += pedido.Valor;
 
                     _context.Update(cobrancaExistente);
-                    _context.Update(pedido);
+                    //_context.Update(pedido);
                 }
 
                 _context.SaveChanges();

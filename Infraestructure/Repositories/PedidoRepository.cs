@@ -57,10 +57,16 @@ namespace Infraestructure.Repositories
                     .FirstOrDefault(p => p.Id == pedido.Id);
 
                 if (pedidoExistente == null)
+                {
                     _context.Add(pedido);
-
+                }
                 else
+                {
+                    pedido.Inclusao = pedidoExistente.Inclusao;
+
                     _context.Update(pedido);
+                }
+                    
 
                 _context.SaveChanges();
 
