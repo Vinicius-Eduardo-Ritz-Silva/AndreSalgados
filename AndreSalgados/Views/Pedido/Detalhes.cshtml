@@ -13,30 +13,133 @@
     var clientes = ViewBag.Clientes as IEnumerable<Cliente>;
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Menu Lateral -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
-                    <span>Produtos Disponíveis</span>
-                </h6>
-                <ul class="nav flex-column">
-                    @foreach (var produto in produtosDisponiveis)
-                    {
-                        <li class="nav-item">
-                            <button class="nav-link text-dark"
-                                    onclick="adicionarProduto('@produto.Id')">
-                                @produto.Descricao1
-                            </button>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
+<!-- CSS adicional -->
+<style>
+    /* Sidebar responsivo */
+    .sidebar {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: -300px;
+        width: 280px;
+        z-index: 1030;
+        padding: 56px 0 0;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+        background-color: #f8f9fa;
+        overflow-y: auto;
+    }
 
-        <!-- Conteúdo Principal -->
-        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        .sidebar.active {
+            left: 0;
+        }
+
+    .sidebar-resizer {
+        position: absolute;
+        right: -10px;
+        top: 0;
+        width: 20px;
+        height: 100%;
+        cursor: col-resize;
+        z-index: 1031;
+    }
+
+    .sidebar-header {
+        padding: 1rem;
+        background-color: #e9ecef;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Botão de menu para mobile */
+    .mobile-menu-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1040;
+        display: none;
+    }
+
+    /* Ajustes para o conteúdo principal */
+    .main-content {
+        margin-left: 0;
+        transition: margin-left 0.3s;
+    }
+
+    .sidebar-active .main-content {
+        margin-left: 280px;
+    }
+
+    /* Ajustes para tabela em mobile */
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Media queries para responsividade */
+    @@media (max-width: 991.98px) {
+        .sidebar {
+            left: -280px;
+        }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+        .mobile-menu-btn {
+            display: block;
+        }
+
+        .main-content {
+            width: 100%;
+            margin-left: 0 !important;
+        }
+    }
+
+    @@media (min-width: 992px) {
+        .sidebar {
+            left: 0;
+        }
+
+        .main-content {
+            margin-left: 280px;
+        }
+    }
+</style>
+
+<div class="container-fluid">
+    <!-- Botão de menu para mobile (aparece apenas em telas pequenas) -->
+    <button class="btn btn-primary rounded-circle mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Menu Lateral -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-resizer" id="sidebarResizer"></div>
+        <div class="sidebar-header" id="sidebarHeader">
+            <h6 class="mb-0">Produtos</h6>
+            <i class="fas fa-chevron-right" id="sidebarToggleIcon"></i>
+        </div>
+        <div class="position-sticky pt-3">
+            <ul class="nav flex-column">
+                @foreach (var produto in produtosDisponiveis)
+                {
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')">
+                            @produto.Descricao1
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <!-- Conteúdo Principal -->
+    <div class="main-content" id="mainContent">
+        <div class="col-md-12 ms-sm-auto px-md-4">
+            <!-- Cabeçalho -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
@@ -246,9 +349,9 @@
             if (input.value < 1) {
                 input.value = 1;
             }
-    
+
             input.value = input.value.replace(/[^0-9]/g, '');
-    
+
             input.value = parseInt(input.value) || 1;
         }
 
@@ -302,10 +405,54 @@
             });
         }
 
-        // Se for um novo pedido, focar no campo de cliente
+        // Controle do menu lateral responsivo
         $(document).ready(function() {
-                if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
+            // Toggle do menu lateral
+            $('#sidebarHeader, #mobileMenuBtn').click(function() {
+                $('#sidebar').toggleClass('active');
+                $('body').toggleClass('sidebar-active');
+                $('#sidebarToggleIcon').toggleClass('fa-chevron-right fa-chevron-left');
+            });
+
+            // Resizer do menu lateral (apenas desktop)
+            if (window.innerWidth >= 992) {
+                const sidebar = document.getElementById('sidebar');
+                const resizer = document.getElementById('sidebarResizer');
+
+                resizer.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+
+                    document.addEventListener('mousemove', resize);
+                    document.addEventListener('mouseup', stopResize);
+                });
+
+                function resize(e) {
+                    const newWidth = e.clientX;
+                    if (newWidth > 200 && newWidth < 400) {
+                        sidebar.style.width = `${newWidth}px`;
+                        document.getElementById('mainContent').style.marginLeft = `${newWidth}px`;
+                    }
+                }
+
+                function stopResize() {
+                    document.removeEventListener('mousemove', resize);
+                }
+            }
+
+            // Focar no campo de cliente se for novo pedido
+            if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
                 $('#clienteSelect').focus();
+            }
+        });
+
+        // Ajustar layout quando a janela for redimensionada
+        $(window).resize(function() {
+            if (window.innerWidth < 992) {
+                $('#sidebar').removeClass('active');
+                $('body').removeClass('sidebar-active');
+            } else {
+                $('#sidebar').addClass('active');
+                $('body').addClass('sidebar-active');
             }
         });
     </script>
