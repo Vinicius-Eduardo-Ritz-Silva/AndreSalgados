@@ -116,8 +116,19 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
-        public RetornoViewModel AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
+        public async Task<RetornoViewModel> AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
         {
+            var pedido = await _pedidoRepository.GetById(Id);
+
+            if (pedido == null || pedido.ClienteId == Guid.Empty)
+            {
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Salve o pedido com um cliente antes de adicionar produtos."
+                };
+            }
+
             var produtoExistente = _produtoPedidoRepository.ProdutoExisteNoPedido(Id, ProdutoId);
 
             if (produtoExistente)
@@ -143,6 +154,15 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade)
         {
+            if (Quantidade <= 0)
+            {
+                return new RetornoViewModel
+                { 
+                    Sucesso = false,
+                    Mensagem = "A quantidade deve ser maior que zero" 
+                };
+            }
+
             var retorno = _produtoPedidoRepository.AtualizarQuantidadeProdutoPedido(Id, Quantidade);
 
             return new RetornoViewModel

@@ -177,14 +177,17 @@
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
         function adicionarProduto(produtoId) {
             const produtoExistente = $(`tr[data-produto-id="${produtoId}"]`).length > 0;
-    
-            if (produtoExistente) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Produto já adicionado',
-                    text: 'Este produto já está no pedido. Você pode atualizar a quantidade diretamente na tabela.',
-                    confirmButtonText: 'Entendi'
-                });
+
+            if (produtoExistente){
+                validaProdutoExistente();
+                return;
+            }
+
+            const pedidoId = '@pedidoId';
+            const clienteId = $('#clienteSelect').val();
+
+            if (!clienteId || pedidoId === '00000000-0000-0000-0000-000000000000') {
+                validaPedidoSalvo();
                 return;
             }
 
@@ -216,6 +219,25 @@
                         });
                     }
                 }
+            });
+        }
+
+        function validaProdutoExistente() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Produto já adicionado',
+                text: 'Este produto já está no pedido. Você pode atualizar a quantidade diretamente na tabela.',
+                confirmButtonText: 'Entendi'
+            });
+        }
+
+        function validaPedidoSalvo() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Salve o pedido primeiro',
+                text: 'Selecione um cliente e salve o pedido antes de adicionar produtos.',
+                confirmButtonText: 'Entendi',
+                footer: '<a href="javascript:salvarPedido()">Clique aqui para salvar o pedido</a>'
             });
         }
 
