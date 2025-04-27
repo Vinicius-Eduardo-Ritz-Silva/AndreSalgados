@@ -160,14 +160,31 @@ namespace AndreSalgados.Controllers
                 };
             }
 
-            var retorno = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
+            var retornoAdicionarProduto = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
+
+            if (!retornoAdicionarProduto)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao vincular produto ao pedido!"
+                };
+
+            if (!pedido.Pago)
+            {
+                var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
+
+                if (!retornoValidar)
+                    return new RetornoViewModel
+                    {
+                        Sucesso = false,
+                        Mensagem = "Erro ao gerar cobrança!",
+                    };
+            }
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno 
-                    ? "Produto vinculado ao pedido com sucesso!" 
-                    : "Erro ao vincular produto ao pedido!"
+                Sucesso = true,
+                Mensagem = "Produto vinculado ao pedido com sucesso!"
             };
         }
 
