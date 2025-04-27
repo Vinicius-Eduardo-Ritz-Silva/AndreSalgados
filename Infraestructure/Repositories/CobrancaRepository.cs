@@ -41,7 +41,7 @@ namespace Infraestructure.Repositories
                 {
                     pedido.CobrancaId = cobrancaExistente.Id;
 
-                    cobrancaExistente.Valor += pedido.Valor;
+                    cobrancaExistente.Valor = pedido.Valor;
 
                     _context.Update(cobrancaExistente);
                     //_context.Update(pedido);

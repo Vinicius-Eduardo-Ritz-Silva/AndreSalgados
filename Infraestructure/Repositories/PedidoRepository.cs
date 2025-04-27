@@ -63,6 +63,8 @@ namespace Infraestructure.Repositories
                 else
                 {
                     pedido.Inclusao = pedidoExistente.Inclusao;
+                    pedido.Valor = pedidoExistente.Valor;
+                    pedido.Quantidade = pedidoExistente.Quantidade;
 
                     _context.Update(pedido);
                 }
