@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Core.DTOs;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
@@ -19,7 +20,7 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
-        public bool AdicionarProdutoPedido(Guid PedidoId, Guid ProdutoId, int Quantidade)
+        public ResultadoDTO AdicionarProdutoPedido(Guid PedidoId, Guid ProdutoId, int Quantidade)
         {
             try
             {
@@ -47,11 +48,18 @@ namespace Infraestructure.Repositories
 
                 _context.SaveChanges();
 
-                return true;
+                return new ResultadoDTO
+                {
+                    Sucesso = true,
+                    Dados = pedido
+                };
             }
             catch
             {
-                return false;
+                return new ResultadoDTO
+                {
+                    Sucesso = false
+                };
             }
         }
 

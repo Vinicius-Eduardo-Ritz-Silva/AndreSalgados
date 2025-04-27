@@ -49,6 +49,21 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public Pedido GetPedidoByProdutoPedido(Guid ProdutoPedidoId)
+        {
+            try
+            {
+                var produtoPedido = _context.ProdutosPedidos.FirstOrDefault(pp => pp.Id == ProdutoPedidoId);
+                var pedido = _context.Pedidos.FirstOrDefault(p => p.Id == produtoPedido.PedidoId);
+
+                return pedido;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public bool SalvarPedido(Pedido pedido)
         {
             try
