@@ -197,3 +197,128 @@ body {
     margin-left: 220px;
     padding: 20px;
 }
+
+/* ===== Sidebar Responsiva ===== */
+.pedido-sidebar {
+    position: fixed;
+    top: 56px; /* Altura da navbar */
+    bottom: 60px; /* Altura do footer */
+    left: -280px;
+    width: 280px;
+    z-index: 1020;
+    padding: 1rem 0;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+}
+
+    .pedido-sidebar.active {
+        left: 0;
+    }
+
+.pedido-sidebar-resizer {
+    position: absolute;
+    right: -10px;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1021;
+}
+
+.pedido-sidebar-header {
+    padding: 0.75rem 1rem;
+    background-color: #e9ecef;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* Conteúdo principal ajustado */
+.pedido-main-content {
+    margin-left: 0;
+    transition: margin-left 0.3s ease;
+    padding: 20px 15px;
+}
+
+/* Botão de menu mobile */
+.pedido-mobile-menu-btn {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 1040;
+    display: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Ajustes para telas grandes (lg) */
+@media (min-width: 992px) {
+    .pedido-sidebar {
+        left: 0;
+    }
+
+    .pedido-main-content {
+        margin-left: 280px;
+    }
+}
+
+/* Ajustes para telas médias/pequenas */
+@media (max-width: 991.98px) {
+    .pedido-mobile-menu-btn {
+        display: block;
+    }
+
+    body.pedido-sidebar-active {
+        overflow: hidden;
+    }
+
+    .pedido-sidebar {
+        bottom: 0;
+    }
+}
+
+/* Ajustes para a tabela de produtos */
+.pedido-product-table {
+    width: 100%;
+}
+
+    .pedido-product-table th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+    }
+
+    .pedido-product-table td,
+    .pedido-product-table th {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+
+    .pedido-product-table tbody tr {
+        transition: background-color 0.2s ease;
+    }
+
+        .pedido-product-table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+/* Ajustes para mobile */
+@media (max-width: 767.98px) {
+    .pedido-product-table {
+        display: block;
+        overflow-x: auto;
+    }
+
+    .pedido-mobile-menu-btn {
+        bottom: 70px;
+    }
+}
