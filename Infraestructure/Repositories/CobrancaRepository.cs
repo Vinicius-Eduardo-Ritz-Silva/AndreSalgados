@@ -48,14 +48,7 @@ namespace Infraestructure.Repositories
                         .AsNoTracking()
                         .ToList();
 
-                    if (pedidosCobrados.Count == 1)
-                    {
-                        cobrancaExistente.Valor = pedido.Valor;
-                    }
-                    else
-                    {
-                        cobrancaExistente.Valor = pedidosCobrados.Sum(pc => pc.Valor);
-                    }
+                    cobrancaExistente.Valor = pedidosCobrados.Sum(pc => pc.Valor);
 
                     _context.Update(cobrancaExistente);
                     //_context.Update(pedido);
