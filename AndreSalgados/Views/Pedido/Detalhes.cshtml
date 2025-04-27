@@ -1,0 +1,312 @@
+﻿@using Application.Core.Entities
+@model Pedido
+
+@{
+    var pedidoId = Model.Id == Guid.Empty && TempData.ContainsKey("NovoPedidoId")
+        ? (Guid)TempData["NovoPedidoId"]
+        : Model.Id;
+
+    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido #{pedidoId.ToString().Substring(0, 8)}";
+
+    var produtosPedido = ViewBag.ProdutosPedido as IEnumerable<ProdutoPedido> ?? new List<ProdutoPedido>();
+    var produtosDisponiveis = ViewBag.ProdutosDisponiveis as IEnumerable<Produto>;
+    var clientes = ViewBag.Clientes as IEnumerable<Cliente>;
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Menu Lateral -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
+                    <span>Produtos Disponíveis</span>
+                </h6>
+                <ul class="nav flex-column">
+                    @foreach (var produto in produtosDisponiveis)
+                    {
+                        <li class="nav-item">
+                            <button class="nav-link text-dark"
+                                    onclick="adicionarProduto('@produto.Id')">
+                                @produto.Descricao1
+                            </button>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <!-- Conteúdo Principal -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <button class="btn btn-sm btn-primary" onclick="salvarPedido()">
+                        <i class="fas fa-save"></i> Salvar Pedido
+                    </button>
+                </div>
+            </div>
+
+            <!-- Seção de Informações do Pedido -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5>Informações do Pedido</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clienteSelect">Cliente</label>
+                                <select class="form-control" id="clienteSelect">
+                                    <option value="">Selecione um cliente</option>
+                                    @foreach (var cliente in clientes)
+                                    {
+                                        <option value="@cliente.Id" selected="@(Model.ClienteId == cliente.Id)">
+                                            @cliente.Nome
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Status</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago ? "checked" : "")>
+                                    <label class="form-check-label" for="pagoCheckbox">
+                                        Pedido Pago
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção de Produtos -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Produtos do Pedido</h5>
+                    <div>
+                        <span class="badge bg-primary mr-2">
+                            Quantidade Total: <span id="totalQuantidade">@Model.Quantidade</span>
+                        </span>
+                        <span class="badge bg-success">
+                            Valor Total: <span id="totalValor">@Model.Valor.ToString("C")</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Valor Unitário</th>
+                                    <th>Subtotal</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produtosPedido">
+                                @foreach (var item in produtosPedido)
+                                {
+                                    <tr data-produto-id="@item.ProdutoId">
+                                        <td>@item.Produto.Descricao1</td>
+                                        <td>
+                                            <input type="number" value="@item.Quantidade"
+                                                   class="form-control quantidade"
+                                                   style="width: 80px;"
+                                                   min="1"
+                                                   onchange="atualizarQuantidade('@item.Id', this.value)"
+                                                   oninput="validaQuantidade(this)">
+                                        </td>
+                                        <td>@item.Valor.ToString("C")</td>
+                                        <td>@(item.SubTotal.ToString("C"))</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger"
+                                                    onclick="removerProduto('@item.Id')">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Função para salvar o pedido (criação ou edição)
+        function salvarPedido() {
+            const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
+            const clienteId = $('#clienteSelect').val();
+            const pago = $('#pagoCheckbox').is(':checked');
+
+            if (!clienteId) {
+                Swal.fire('Atenção', 'Selecione um cliente', 'warning');
+                return;
+            }
+
+            $.ajax({
+                url: '/Pedido/SalvarPedido',
+                type: 'POST',
+                data: {
+                    Id: pedidoId,
+                    ClienteId: clienteId,
+                    Pago: pago
+                },
+                success: function(response) {
+                    if (response.sucesso) {
+
+                        window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
+                    } else {
+                        Swal.fire('Erro', response.Mensagem, 'error');
+                    }
+                },
+                error: function() {
+                    Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+                }
+            });
+        }
+
+        // Funções para adicionar/atualizar/remover produtos (manter as anteriores)
+        function adicionarProduto(produtoId) {
+            const produtoExistente = $(`tr[data-produto-id="${produtoId}"]`).length > 0;
+
+            if (produtoExistente){
+                validaProdutoExistente();
+                return;
+            }
+
+            const pedidoId = '@pedidoId';
+            const clienteId = $('#clienteSelect').val();
+
+            if (!clienteId || pedidoId === '00000000-0000-0000-0000-000000000000') {
+                validaPedidoSalvo();
+                return;
+            }
+
+            Swal.fire({
+                title: 'Quantidade',
+                input: 'number',
+                inputValue: 1,
+                inputAttributes: {
+                    min: 1,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Adicionar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const quantidade = parseInt(result.value);
+                    if (quantidade > 0) {
+                        $.post('/Pedido/AdicionarProdutoPedido', {
+                            Id: '@pedidoId',
+                            ProdutoId: produtoId,
+                            Quantidade: quantidade
+                        }, function(response) {
+                            if (response.sucesso) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Erro', response.mensagem, 'error');
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+        function validaProdutoExistente() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Produto já adicionado',
+                text: 'Este produto já está no pedido. Você pode atualizar a quantidade diretamente na tabela.',
+                confirmButtonText: 'Entendi'
+            });
+        }
+
+        function validaPedidoSalvo() {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Salve o pedido primeiro',
+                text: 'Selecione um cliente e salve o pedido antes de adicionar produtos.',
+                confirmButtonText: 'Entendi',
+                footer: '<a href="javascript:salvarPedido()">Clique aqui para salvar o pedido</a>'
+            });
+        }
+
+        function validaQuantidade(input) {
+            debugger;
+            if (input.value < 1) {
+                input.value = 1;
+            }
+    
+            input.value = input.value.replace(/[^0-9]/g, '');
+    
+            input.value = parseInt(input.value) || 1;
+        }
+
+        function atualizarQuantidade(Id, quantidade) {
+            quantidade = parseInt(quantidade);
+            if (isNaN(quantidade) || quantidade < 1) {
+                Swal.fire('Atenção', 'A quantidade deve ser maior que zero', 'warning');
+                return;
+            }
+
+            $.post('/Pedido/AtualizarQuantidadeProdutoPedido', {
+                    Id: Id,
+                    Quantidade: quantidade
+            }, function(response) {
+                if (!response.sucesso) {
+                    Swal.fire('Erro', response.mensagem, 'error');
+                    location.reload();
+                }
+                else {
+                    location.reload();
+                }
+            });
+        }
+
+        function removerProduto(Id) {
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você está prestes a remover este produto do pedido!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, remover!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Pedido/RemoverProdutoPedido',
+                        type: 'POST',
+                        data: {
+                            Id: Id
+                        },
+                        success: function(response) {
+                            if (response.sucesso) {
+                                location.reload();
+                            } else {
+                                Swal.fire('Erro', response.mensagem, 'error');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Se for um novo pedido, focar no campo de cliente
+        $(document).ready(function() {
+                if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
+                $('#clienteSelect').focus();
+            }
+        });
+    </script>
+}

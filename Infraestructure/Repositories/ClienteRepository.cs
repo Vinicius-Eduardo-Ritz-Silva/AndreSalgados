@@ -10,89 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class ClienteRepository : IClienteRepository
+    public class ClienteRepository : MainRepository<Cliente>, IClienteRepository
     {
         private readonly VrContext _context;
 
-        public ClienteRepository(VrContext context) 
+        public ClienteRepository(VrContext context) : base(context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<Cliente>> Get()
-        {
-            try
-            {
-                var clientes = await _context.Clientes
-                    .Where(c => c.Ativo == true).OrderBy(c => c.Nome).ToListAsync();
-
-                return clientes;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<Cliente> GetClienteById(Guid Id)
-        {
-            try
-            {
-                var cliente = await _context.Clientes.FirstOrDefaultAsync(c => c.Id == Id);
-
-                return cliente;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public bool SalvarCliente(Cliente cliente)
-        {
-            try
-            {
-                var clienteExistente = _context.Clientes.AsNoTracking().FirstOrDefault(c => c.Id == cliente.Id);
-
-                if (clienteExistente != null)
-                {
-                    cliente.Inclusao = clienteExistente.Inclusao;
-
-                    _context.Update(cliente);
-                }
-                else
-                {
-                    _context.Add(cliente);
-                }
-
-                _context.SaveChanges();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }    
-        }
-
-        public bool ExcluirCliente(Guid Id)
-        {
-            try
-            {
-                var cliente = _context.Clientes.FirstOrDefault(c => c.Id == Id);
-
-                cliente.Ativo = false;
-
-                _context.Update(cliente);
-
-                _context.SaveChanges();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
     }
 }

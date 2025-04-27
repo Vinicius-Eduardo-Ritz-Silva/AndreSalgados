@@ -37,32 +37,31 @@ namespace AndreSalgados.Controllers
         {
             var clientes = await _clienteRepository.Get();
 
-            return clientes;
+            return clientes.OrderBy(c => c.Nome);
         }
 
         [HttpGet]
         public async Task<Cliente> GetClienteById(Guid Id)
         {
-            var cliente = await _clienteRepository.GetClienteById(Id);
+            var cliente = await _clienteRepository.GetById(Id);
 
             return cliente;
         }
 
         [HttpPost]
-        public RetornoViewModel SalvarCliente([FromBody] string dados)
+        public async Task<RetornoViewModel> SalvarCliente([FromBody] string dados)
         {
             try
             {
-                var jsonObj = JObject.Parse(dados);
                 var cliente = new Cliente();
-                var serializer = new JsonSerializer();
-                serializer.Populate(jsonObj.CreateReader(), cliente);
+
+                JsonConvert.PopulateObject(dados, cliente);
 
                 cliente.Alteracao = DateTime.Now;
                 cliente.Inclusao = DateTime.Now;
                 cliente.Ativo = true;
 
-                var retorno = _clienteRepository.SalvarCliente(cliente);
+                var retorno = await _clienteRepository.InsertOrReplace(cliente);
 
                 return new RetornoViewModel
                 {
@@ -79,9 +78,9 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpDelete]
-        public RetornoViewModel ExcluirCliente(Guid Id)
+        public async Task<RetornoViewModel> ExcluirCliente(Guid Id)
         {
-            var retorno = _clienteRepository.ExcluirCliente(Id);
+            var retorno = await _clienteRepository.Excluir(Id);
 
             return new RetornoViewModel
             {

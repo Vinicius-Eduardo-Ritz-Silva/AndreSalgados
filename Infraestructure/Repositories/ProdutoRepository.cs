@@ -10,89 +10,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class ProdutoRepository : IProdutoRepository
+    public class ProdutoRepository : MainRepository<Produto>, IProdutoRepository
     {
         private readonly VrContext _context;
 
-        public ProdutoRepository(VrContext context) 
+        public ProdutoRepository(VrContext context) : base(context)
         {
             _context = context;
         }
 
-        public bool ExcluirProduto(Guid Id)
-        {
-            try
-            {
-                var produto = _context.Produtos.FirstOrDefault(c => c.Id == Id);
-
-                produto.Ativo = false;
-
-                _context.Update(produto);
-
-                _context.SaveChanges();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
-
-        public async Task<IEnumerable<Produto>> Get()
-        {
-            try
-            {
-                var produtos = await _context.Produtos
-                    .Where(c => c.Ativo == true).OrderBy(c => c.Descricao1).ToListAsync();
-
-                return produtos;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<Produto> GetProdutoById(Guid Id)
-        {
-            try
-            {
-                var produto = await _context.Produtos.FirstOrDefaultAsync(c => c.Id == Id);
-
-                return produto;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public bool SalvarProduto(Produto produto)
-        {
-            try
-            {
-                var produtoExistente = _context.Produtos.AsNoTracking().FirstOrDefault(c => c.Id == produto.Id);
-
-                if (produtoExistente != null)
-                {
-                    produto.Inclusao = produtoExistente.Inclusao;
-
-                    _context.Update(produto);
-                }
-                else
-                {
-                    _context.Add(produto);
-                }
-
-                _context.SaveChanges();
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
     }
 }

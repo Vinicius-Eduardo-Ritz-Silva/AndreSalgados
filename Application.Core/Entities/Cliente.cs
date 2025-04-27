@@ -5,7 +5,7 @@ namespace Application.Core.Entities
     [Table("VR_CLIENTE")]
     public class Cliente : MainModel
     {
-        #region Propriedades
+        #region -> Propriedades
 
         [Column("NM_NOMECLIE")]
         public string Nome { get; set; }

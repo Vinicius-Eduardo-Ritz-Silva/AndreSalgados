@@ -5,19 +5,78 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
+using Azure;
 using Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class PedidoRepository : IPedidoRepository
+    public class PedidoRepository : MainRepository<Pedido>, IPedidoRepository
     {
         private readonly VrContext _context;
 
-        public PedidoRepository(VrContext context) 
+        public PedidoRepository(VrContext context) : base(context)
         {
             _context = context;
         }
 
-        //Metodos aqui
+        public async Task<IEnumerable<Pedido>> GetPedidos()
+        {
+            try
+            {
+                var pedidos = await _context.Pedidos
+                    .Where(c => c.Ativo == true).OrderBy(c => c.Cliente.Nome).ToListAsync();
+
+                return pedidos;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<Pedido> GetPedidoById(Guid Id)
+        {
+            try
+            {
+                var pedido = await _context.Pedidos.FirstOrDefaultAsync(c => c.Id == Id);
+
+                return pedido;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public bool SalvarPedido(Pedido pedido)
+        {
+            try
+            {
+                if (!pedido.Pago)
+                {
+                    var cobranca = new Cobranca();
+
+                    pedido.CobrancaId = cobranca.Id;
+                }
+
+                var pedidoExistente = _context.Pedidos.AsNoTracking()
+                    .FirstOrDefault(p => p.Id == pedido.Id);
+
+                if (pedidoExistente == null)
+                    _context.Add(pedido);
+
+                else
+                    _context.Update(pedido);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

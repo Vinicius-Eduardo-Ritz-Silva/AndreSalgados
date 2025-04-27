@@ -5,7 +5,7 @@ namespace Application.Core.Entities
     [Table("VR_PEDIDO")]
     public class Pedido : MainModel
     {
-        #region Propriedades
+        #region -> Propriedades
 
         [Column("NR_QUANPEDI")]
         public int Quantidade { get; set; }
@@ -18,7 +18,7 @@ namespace Application.Core.Entities
 
         #endregion
 
-        #region Relacionamentos
+        #region -> Relacionamentos
 
         [Column("ID_CLIE")]
         public Guid ClienteId { get; set; }

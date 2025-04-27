@@ -37,32 +37,31 @@ namespace AndreSalgados.Controllers
         {
             var produto = await _produtoRepository.Get();
 
-            return produto;
+            return produto.OrderBy(p => p.Descricao1);
         }
 
         [HttpGet]
         public async Task<Produto> GetProdutoById(Guid Id)
         {
-            var produto = await _produtoRepository.GetProdutoById(Id);
+            var produto = await _produtoRepository.GetById(Id);
 
             return produto;
         }
 
         [HttpPost]
-        public RetornoViewModel SalvarProduto([FromBody] string dados)
+        public async Task<RetornoViewModel> SalvarProduto([FromBody] string dados)
         {
             try
             {
-                var jsonObj = JObject.Parse(dados);
                 var produto = new Produto();
-                var serializer = new JsonSerializer();
-                serializer.Populate(jsonObj.CreateReader(), produto);
+
+                JsonConvert.PopulateObject(dados, produto);
 
                 produto.Alteracao = DateTime.Now;
                 produto.Inclusao = DateTime.Now;
                 produto.Ativo = true;
 
-                var retorno = _produtoRepository.SalvarProduto(produto);
+                var retorno = await _produtoRepository.InsertOrReplace(produto);
 
                 return new RetornoViewModel
                 {
@@ -79,9 +78,9 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpDelete]
-        public RetornoViewModel ExcluirProduto(Guid Id)
+        public async Task<RetornoViewModel> ExcluirProduto(Guid Id)
         {
-            var retorno = _produtoRepository.ExcluirProduto(Id);
+            var retorno = await _produtoRepository.Excluir(Id);
 
             return new RetornoViewModel
             {

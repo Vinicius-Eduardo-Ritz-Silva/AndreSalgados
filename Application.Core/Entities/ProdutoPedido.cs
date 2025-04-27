@@ -5,7 +5,7 @@ namespace Application.Core.Entities
     [Table("VR_PRODUTO_PEDIDO")]
     public class ProdutoPedido : MainModel
     {
-        #region Propriedades
+        #region -> Propriedades
 
         [Column("NR_QUANPEDIPROD")]
         public int Quantidade { get; set; }
@@ -15,7 +15,7 @@ namespace Application.Core.Entities
 
         #endregion
 
-        #region Relacionamentos
+        #region -> Relacionamentos
 
         [Column("ID_PEDI")]
         public Guid PedidoId { get; set; }
@@ -30,5 +30,14 @@ namespace Application.Core.Entities
         public virtual Produto Produto { get; set; }
 
         #endregion
+
+        [NotMapped]
+        public decimal SubTotal
+        {
+            get
+            {
+                return Quantidade * Valor;
+            }
+        }
     }
 }

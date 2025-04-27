@@ -6,6 +6,8 @@
 
         public string Mensagem { get; set; }
 
+        public object Dados { get; set; }
+
         public string Codigo { get; set; }
     }
 }

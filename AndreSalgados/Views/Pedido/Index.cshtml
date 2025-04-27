@@ -1,22 +1,22 @@
 ﻿@using Application.Core.Entities;
-@model IEnumerable<Produto>
+@model IEnumerable<Pedido>
 
 @{
-    ViewData["Title"] = "Produtos";
+    ViewData["Title"] = "Pedidos";
 }
 
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="mt-4"><i class="fas fa-cheese me-2"></i>Produtos</h1>
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#clienteModal" onclick="incluirProduto()">
-            <i class="fas fa-plus me-1"></i> Novo Produto
-        </button>
+        <h1 class="mt-4"><i class="fas fa-book me-2"></i>Pedidos</h1>
+        <a asp-action="Detalhes" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Gerar Pedido
+        </a>
     </div>
 
     <div class="card mb-4">
         <div class="card-header bg-white">
             <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-table me-1"></i> Lista de Produtos</h5>
+                <h5 class="mb-0"><i class="fas fa-table me-1"></i> Lista de Pedidos</h5>
                 <div class="input-group" style="width: 300px;">
                     <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar...">
                     <button class="btn btn-outline-secondary" type="button" id="searchButton">
@@ -30,10 +30,10 @@
                 <table id="clientesTable" class="table table-striped table-hover table-bordered">
                     <thead class="table-light">
                         <tr>
-                            <th>Nome</th>
-                            <th>Descricao</th>
-                            <th>Preco</th>
-                            <th>Quantidade</th>
+                            <th>Cliente</th>
+                            <th>Quantidade Total</th>
+                            <th>Valor Total</th>
+                            <th>Pago</th>
                             <th class="text-center">Ações</th>
                         </tr>
                     </thead>
@@ -41,16 +41,25 @@
                         @foreach (var item in Model)
                         {
                             <tr>
-                                <td>@Html.DisplayFor(modelItem => item.Descricao1)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Descricao2)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Preco)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Cliente.Nome)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Quantidade)</td>
+                                <td>@Html.DisplayFor(modelItem => item.Valor)</td>
+                                <td>
+                                    @if (item.Pago)
+                                    {
+                                        <span class="badge bg-success">Sim</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning">Não</span>
+                                    }
+                                </td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <button onclick="detalhesProduto('@item.Id')"
-                                                class="btn btn-sm btn-info" title="Detalhes">
-                                            <i class="fas fa-eye"></i>
-                                        </button>
+                                        <a asp-action="Detalhes" asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-info" title="Detalhes">
+                                            <i class="fas fa-eye"></i> Editar
+                                        </a>
                                         <button onclick="confirmDelete('@item.Id')"
                                                 class="btn btn-sm btn-danger" title="Excluir">
                                             <i class="fas fa-trash-alt"></i>
@@ -66,7 +75,7 @@
     </div>
 </div>
 
-<!-- Modal para Cadastro/Edicao de Produto -->
+<!-- Modal para Cadastro/Edicao de Pedido -->
 <div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -99,7 +108,7 @@
                             <input type="number" class="form-control" id="Quantidade" name="Quantidade" required>
                             <div class="invalid-feedback">Por favor, informe a quantidade do produto.</div>
                         </div>
-                    </div>  
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -119,17 +128,17 @@
         // Variável global para controle do modo (novo/editar)
         let modoEdicao = false;
 
-        // Função para novo produto
-        function incluirProduto() {
+        // Função para novo pedido
+        function incluirPedido() {
             modoEdicao = false;
-            $('#modalTitle').html('<i class="fas fa-user-plus me-2"></i>Novo Produto');
+            $('#modalTitle').html('<i class="fas fa-user-plus me-2"></i>Novo Pedido');
             $('#Id').val('');
         }
 
-        // Função para editar produto
-        function detalhesProduto(id) {
+        // Função para editar pedido
+        function detalhesPedido(id) {
             modoEdicao = true;
-            $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Editar Produto');
+            $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Editar Pedido');
 
             $.get('/Produto/GetProdutoById', { id: id }, function(produto) {
                 $('#Id').val(produto.id);
@@ -163,9 +172,9 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     $.ajax({
-                        url: '/Produto/ExcluirProduto',
-                        type: 'DELETE',
-                        data: { id: id },
+                        url: '/Pedido/ExcluirPedido',
+                        type: 'POST',
+                        data: { Id: id },
                         success: function (response) {
                             if (response.sucesso) {
                                 Swal.fire(

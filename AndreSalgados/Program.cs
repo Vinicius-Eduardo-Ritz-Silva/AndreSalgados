@@ -10,8 +10,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<VrContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-#region Interfaces e Repositories
+#region -> Interfaces e Repositories
 
+builder.Services.AddScoped(typeof(IMainRepository<>), typeof(MainRepository<>));
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<ICobrancaRepository, CobrancaRepository>();
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
@@ -21,6 +22,13 @@ builder.Services.AddScoped<IRelatorioVendaRepository, RelatorioVendaRepository>(
 builder.Services.AddScoped<ITipoProdutoRepository, TipoProdutoRepository>();
 
 #endregion
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
@@ -38,6 +46,8 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",
