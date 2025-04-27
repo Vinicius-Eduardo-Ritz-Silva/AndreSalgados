@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
@@ -41,7 +42,20 @@ namespace Infraestructure.Repositories
                 {
                     pedido.CobrancaId = cobrancaExistente.Id;
 
-                    cobrancaExistente.Valor = pedido.Valor;
+                    var pedidosCobrados = _context.Pedidos
+                        .Where(p => p.ClienteId == cliente.Id
+                               && p.Pago == false && p.Ativo)
+                        .AsNoTracking()
+                        .ToList();
+
+                    if (pedidosCobrados.Count == 1)
+                    {
+                        cobrancaExistente.Valor = pedido.Valor;
+                    }
+                    else
+                    {
+                        cobrancaExistente.Valor = pedidosCobrados.Sum(pc => pc.Valor);
+                    }
 
                     _context.Update(cobrancaExistente);
                     //_context.Update(pedido);

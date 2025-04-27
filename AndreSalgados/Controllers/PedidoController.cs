@@ -238,12 +238,26 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public async Task<RetornoViewModel> ExcluirPedido(Guid Id)
         {
-            var retorno = await _pedidoRepository.Excluir(Id);
+            var retornoExcluir = await _pedidoRepository.Excluir(Id);
+
+            if (!retornoExcluir)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Deu ruim!"
+                };
+
+            var pedido = await GetPedidoById(Id);
+
+            var retornoValidar = ValidarPedidoPago(pedido);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
+                Sucesso = true,
+                Mensagem = "Deu bom!"
             };
         }
 
