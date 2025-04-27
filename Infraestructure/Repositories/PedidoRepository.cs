@@ -53,13 +53,6 @@ namespace Infraestructure.Repositories
         {
             try
             {
-                if (!pedido.Pago)
-                {
-                    var cobranca = new Cobranca();
-
-                    pedido.CobrancaId = cobranca.Id;
-                }
-
                 var pedidoExistente = _context.Pedidos.AsNoTracking()
                     .FirstOrDefault(p => p.Id == pedido.Id);
 

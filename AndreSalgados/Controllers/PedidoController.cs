@@ -12,16 +12,19 @@ namespace AndreSalgados.Controllers
         private readonly IProdutoRepository _produtoRepository;
         private readonly IProdutoPedidoRepository _produtoPedidoRepository;
         private readonly IClienteRepository _clienteRepository;
+        private readonly ICobrancaRepository _cobrancaRepository;
 
         public PedidoController(IPedidoRepository pedidoRepository,
                                 IProdutoRepository produtoRepository,
                                 IProdutoPedidoRepository produtoPedidoRepository,
-                                IClienteRepository clienteRepository)
+                                IClienteRepository clienteRepository,
+                                ICobrancaRepository cobrancaRepository)
         {
             _pedidoRepository = pedidoRepository;
             _produtoRepository = produtoRepository;
             _produtoPedidoRepository = produtoPedidoRepository;
             _clienteRepository = clienteRepository;
+            _cobrancaRepository = cobrancaRepository;
         }
 
         [HttpGet]
@@ -100,14 +103,31 @@ namespace AndreSalgados.Controllers
             pedido.ClienteId = ClienteId;
             pedido.Pago = Pago;
 
-            var retorno = _pedidoRepository.SalvarPedido(pedido);
-            
+            var retornoSalvar = _pedidoRepository.SalvarPedido(pedido);
+
+            if (!retornoSalvar)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao salvar pedido!",
+                };
+
+            if (!pedido.Pago)
+            {
+                var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
+
+                if (!retornoValidar)
+                    return new RetornoViewModel
+                    {
+                        Sucesso = false,
+                        Mensagem = "Erro ao gerar cobrança!",
+                    };
+            }
+
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno 
-                    ? "Pedido salvo com sucesso!" 
-                    : "Erro ao salvar pedido!",
+                Sucesso = true,
+                Mensagem = "Pedido salvo com sucesso!",
                 Dados = new
                 {
                     pedidoId = pedido.Id

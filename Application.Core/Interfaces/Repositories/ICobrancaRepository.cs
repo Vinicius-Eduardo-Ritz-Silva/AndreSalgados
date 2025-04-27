@@ -9,5 +9,6 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface ICobrancaRepository
     {
+        public bool GerarCobranca(Pedido pedido);
     }
 }
