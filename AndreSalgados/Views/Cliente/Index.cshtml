@@ -84,7 +84,7 @@
                         <div class="col-md-6">
                             <label for="Numero" class="form-label">Número</label>
                             <input type="text" class="form-control" id="Numero" name="Numero" required>
-                            <div class="invalid-feedback">Por favor, informe o número do cliente.</div>
+                            <div class="invalid-feedback" id="numeroFeedback">Por favor, informe um número de celular válido (11 dígitos)</div>
                         </div>
                     </div>
                     <div class="mb-3">
@@ -110,6 +110,17 @@
     <script>
         // Variável global para controle do modo (novo/editar)
         let modoEdicao = false;
+
+        // Validação do celular no blur (quando sai do campo)
+        $('#Numero').on('blur', function() {
+            const numero = $(this).val().replace(/\D/g, ''); // Remove não-dígitos
+    
+            if(numero.length !== 11) {
+                $(this).addClass('is-invalid');
+                $('#numeroFeedback').show();
+                return;
+            }
+        });
 
         // Função para novo cliente
         function incluirCliente() {
@@ -199,6 +210,13 @@
             // Validação do formulário no modal
             $('#clienteForm').submit(function (e) {
                 e.preventDefault();
+
+                const numero = $('#Numero').val().replace(/\D/g, '');
+                if(numero.length !== 11) {
+                    $('#Numero').addClass('is-invalid');
+                    $('#numeroFeedback').show().text('O celular deve ter 11 dígitos');
+                    return;
+                }
 
                 var form = this;
                 if (!form.checkValidity()) {
