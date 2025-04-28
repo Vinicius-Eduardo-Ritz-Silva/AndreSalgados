@@ -92,16 +92,18 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
-        public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago)
+        public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago, bool Edicao)
         {
-            var pedido = new Pedido();
-
-            pedido.Id = Id;
-            pedido.Inclusao = DateTime.Now;
-            pedido.Alteracao = DateTime.Now;
-            pedido.Ativo = true;
-            pedido.ClienteId = ClienteId;
-            pedido.Pago = Pago;
+            var pedido = new Pedido
+            {
+                Id = Id,
+                Inclusao = DateTime.Now,
+                Alteracao = DateTime.Now,
+                Ativo = true,
+                ClienteId = ClienteId,
+                Pago = Pago,
+                Edicao = Edicao
+            };
 
             var retornoSalvar = _pedidoRepository.SalvarPedido(pedido);
 
@@ -120,7 +122,9 @@ namespace AndreSalgados.Controllers
             return new RetornoViewModel
             {
                 Sucesso = true,
-                Mensagem = "Pedido salvo com sucesso!",
+                Mensagem = pedido.Edicao
+                    ? "Pedido em edição!"
+                    : "Pedido salvo com sucesso!",
                 Dados = new
                 {
                     pedidoId = pedido.Id

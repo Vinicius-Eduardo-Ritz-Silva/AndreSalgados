@@ -46,8 +46,8 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <button class="btn btn-sm btn-primary" onclick="salvarPedido()">
-                        <i class="fas fa-save"></i> Salvar Pedido
+                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()">
+                        <i class="fas fa-save"></i> @(Model.Edicao ? "Editar" : "Salvar") Pedido
                     </button>
                 </div>
             </div>
@@ -147,11 +147,12 @@
 
 @section Scripts {
     <script>
-        // Função para salvar o pedido (criação ou edição)
-        function salvarPedido() {
-            const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
+                // Função unificada para salvar/editar
+        function salvarOuEditarPedido() {
+            const pedidoId = '@pedidoId';
             const clienteId = $('#clienteSelect').val();
             const pago = $('#pagoCheckbox').is(':checked');
+            const edicao = @Json.Serialize(Model.Edicao);
 
             if (!clienteId) {
                 Swal.fire('Atenção', 'Selecione um cliente', 'warning');
@@ -164,11 +165,11 @@
                 data: {
                     Id: pedidoId,
                     ClienteId: clienteId,
-                    Pago: pago
+                    Pago: pago,
+                    Edicao: !edicao
                 },
                 success: function(response) {
                     if (response.sucesso) {
-
                         window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
                     } else {
                         Swal.fire('Erro', response.Mensagem, 'error');
@@ -310,6 +311,11 @@
 
         // Controle do sidebar
         $(document).ready(function() {
+            if (@Json.Serialize(Model.Edicao)) {
+                $('#clienteSelect').prop('disabled', true);
+                $('#pagoCheckbox').prop('disabled', true);
+            }
+
             // Toggle do sidebar
             $('#sidebarHeader, #mobileMenuBtn').click(function() {
                 $('#pedidoSidebar').toggleClass('active');
