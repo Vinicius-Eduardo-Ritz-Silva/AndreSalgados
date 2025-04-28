@@ -4,16 +4,19 @@ using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infraestructure.Data
+namespace Infraestructure.Data.Migrations
 {
     [DbContext(typeof(VrContext))]
-    partial class VrContextModelSnapshot : ModelSnapshot
+    [Migration("20250428025747_FlagEdicao")]
+    partial class FlagEdicao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

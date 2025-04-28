@@ -16,6 +16,9 @@ namespace Application.Core.Entities
         [Column("FL_PEDIPAGO")]
         public bool Pago { get; set; }
 
+        [Column("FL_EDITPEDI")]
+        public bool Edicao { get; set; }
+
         #endregion
 
         #region -> Relacionamentos
