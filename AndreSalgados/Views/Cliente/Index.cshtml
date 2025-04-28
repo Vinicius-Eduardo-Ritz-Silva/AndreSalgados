@@ -41,7 +41,7 @@
                         {
                             <tr>
                                 <td>@Html.DisplayFor(modelItem => item.Nome)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Numero)</td>
+                                <td class="telefone-cell">@Html.DisplayFor(modelItem => item.Numero)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Endereco)</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
@@ -192,6 +192,15 @@
 
         // Pesquisa na tabela
         $(document).ready(function () {
+            $('.telefone-cell').each(function() {
+                const numero = $(this).text().trim();
+                if (numero.length === 11) {
+                    $(this).text(numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3'));
+                } else if (numero.length === 10) {
+                    $(this).text(numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3'));
+                }
+            });
+
             $('#searchButton').click(function () {
                 searchTable();
             });
