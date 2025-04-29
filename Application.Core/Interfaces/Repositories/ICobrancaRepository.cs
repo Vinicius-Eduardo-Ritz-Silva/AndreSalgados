@@ -7,7 +7,7 @@ using Application.Core.Entities;
 
 namespace Application.Core.Interfaces.Repositories
 {
-    public interface ICobrancaRepository
+    public interface ICobrancaRepository : IMainRepository<Cobranca>
     {
         public bool GerarCobranca(Pedido pedido);
     }

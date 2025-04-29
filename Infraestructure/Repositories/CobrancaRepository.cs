@@ -10,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infraestructure.Repositories
 {
-    public class CobrancaRepository : ICobrancaRepository
+    public class CobrancaRepository : MainRepository<Cobranca>, ICobrancaRepository
     {
         private readonly VrContext _context;
 
-        public CobrancaRepository(VrContext context) 
+        public CobrancaRepository(VrContext context) : base(context)
         {
             _context = context;
         }
@@ -32,6 +32,9 @@ namespace Infraestructure.Repositories
 
                     cobrancaNova.ClienteId = cliente.Id;
                     cobrancaNova.Valor = pedido.Valor;
+                    cobrancaNova.Inclusao = DateTime.Now;
+                    cobrancaNova.Alteracao = DateTime.Now;
+                    cobrancaNova.Ativo = true;
 
                     pedido.CobrancaId = cobrancaNova.Id;
 
@@ -48,6 +51,7 @@ namespace Infraestructure.Repositories
                         .AsNoTracking()
                         .ToList();
 
+                    cobrancaExistente.Alteracao = DateTime.Now;
                     cobrancaExistente.Valor = pedidosCobrados.Sum(pc => pc.Valor);
 
                     _context.Update(cobrancaExistente);
