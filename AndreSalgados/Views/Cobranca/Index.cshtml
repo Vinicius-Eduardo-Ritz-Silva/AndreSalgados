@@ -44,20 +44,28 @@
                                 <td>
                                     @if (item.CobrancaPerdida)
                                     {
-                                        <span class="badge bg-error">Perdida</span>
+                                        <span class="badge bg-danger">Perdida</span>
+                                    }
+                                    else if (!item.DataCobranca.HasValue)
+                                    {
+                                        <span class="badge bg-warning">Aberta</span>
+                                    }
+                                    else if (item.DataCobranca.Value.Date > DateTime.Today)
+                                    {
+                                        <span class="badge bg-primary">Agendada</span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-warning">Aberta</span>
+                                        <span class="badge bg-success">Vencida</span>
                                     }
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
-                                        <a asp-action="Detalhes" asp-route-id="@item.Id"
-                                           class="btn btn-sm btn-info" title="Setar Data Cobrança">
+                                        <button onclick="mostrarCalendario('@item.Id')"
+                                                class="btn btn-sm btn-info" title="Setar Data Cobrança">
                                             <i class="fas fa-calendar"></i> Definir Data
-                                        </a>
-                                        <button onclick="confirmDelete('@item.Id')"
+                                        </button>
+                                        <button onclick="marcarComoPerdida('@item.Id')"
                                                 class="btn btn-sm btn-danger" title="Cobrança Perdida">
                                             <i class="fas fa-x"></i>
                                         </button>
@@ -72,122 +80,127 @@
     </div>
 </div>
 
-<!-- Modal para Cadastro/Edicao de Pedido -->
-<div class="modal fade" id="clienteModal" tabindex="-1" aria-labelledby="clienteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<!-- Modal do Calendário -->
+<div class="modal fade" id="calendarioModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalTitle"><i class="fas fa-user-plus me-2"></i>Novo Cliente</h5>
+                <h5 class="modal-title">Selecione a Data</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="clienteForm">
-                <input type="hidden" id="Id" name="Id" value="">
-                <div class="modal-body">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="Nome" class="form-label">Nome</label>
-                            <input type="text" class="form-control" id="Nome" name="Nome" required>
-                            <div class="invalid-feedback">Por favor, informe o nome do produto.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="Descricao" class="form-label">Descricao</label>
-                            <input type="text" class="form-control" id="Descricao" name="Descricao">
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label for="Preco" class="form-label">Preco</label>
-                            <input type="number" class="form-control" id="Preco" name="Preco" required>
-                            <div class="invalid-feedback">Por favor, informe o preco do produto.</div>
-                        </div>
-                        <div class="col-md-6">
-                            <label for="Quantidade" class="form-label">Quantidade</label>
-                            <input type="number" class="form-control" id="Quantidade" name="Quantidade" required>
-                            <div class="invalid-feedback">Por favor, informe a quantidade do produto.</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                        <i class="fas fa-times me-1"></i> Cancelar
-                    </button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i> Salvar
-                    </button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <div id="calendar"></div>
+                <input type="hidden" id="cobrancaId" value="">
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary ms-2" onclick="definirDataCobranca()">Confirmar</button>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Variável global para controle do modo (novo/editar)
-        let modoEdicao = false;
+        // Variáveis globais
+        let calendar;
+        let cobrancaIdAtual = '';
 
-        // Função para novo pedido
-        function incluirPedido() {
-            modoEdicao = false;
-            $('#modalTitle').html('<i class="fas fa-user-plus me-2"></i>Novo Pedido');
-            $('#Id').val('');
+        // Função para mostrar o calendário
+        function mostrarCalendario(id) {
+            cobrancaIdAtual = id;
+            $('#cobrancaId').val(id);
+
+            // Inicializa o calendário se ainda não existir
+            if (!calendar) {
+                const calendarEl = document.getElementById('calendar');
+
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'pt-br',
+                    headerToolbar: {
+                        left: 'prev',
+                        center: 'title',
+                        right: 'next'
+                    },
+                    dateClick: function(info) {
+                        // Limpa seleções anteriores
+                        $('.fc-day').removeClass('fc-day-selected');
+                        // Marca o dia selecionado
+                        $(info.dayEl).addClass('fc-day-selected');
+                        $('#calendarioModal .modal-footer').show();
+                    },
+                    dayCellClassNames: 'fc-day-selectable'
+                });
+
+                calendar.render();
+            }
+
+            // Mostra o modal
+            const modal = new bootstrap.Modal(document.getElementById('calendarioModal'));
+            modal.show();
+
+            // Esconde o footer inicialmente
+            $('#calendarioModal .modal-footer').hide();
         }
 
-        // Função para editar pedido
-        function detalhesPedido(id) {
-            modoEdicao = true;
-            $('#modalTitle').html('<i class="fas fa-edit me-2"></i>Editar Pedido');
+        // Função para definir a data de cobrança
+        function definirDataCobranca() {
+            const selectedDate = $('.fc-day-selected').attr('data-date');
 
-            $.get('/Produto/GetProdutoById', { id: id }, function(produto) {
-                $('#Id').val(produto.id);
-                $('#Nome').val(produto.descricao1);
-                $('#Descricao').val(produto.descricao2);
-                $('#Preco').val(produto.preco);
-                $('#Quantidade').val(produto.quantidade);
+            if (!selectedDate) {
+                Swal.fire('Atenção', 'Selecione uma data no calendário', 'warning');
+                return;
+            }
 
-                var modal = new bootstrap.Modal(document.getElementById('clienteModal'));
-                modal.show();
-            }).fail(function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Erro!',
-                    text: 'Não foi possível carregar os dados do produto.'
-                });
+            $.post('/Cobranca/DefinirDataCobranca', {
+                id: cobrancaIdAtual,
+                dataCobranca: selectedDate
+            }, function(response) {
+                if (response.sucesso) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sucesso!',
+                        text: 'Data de cobrança definida com sucesso',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Erro', response.mensagem, 'error');
+                }
             });
         }
 
-        // Função para confirmar exclusão
-        function confirmDelete(id) {
+        // Função para marcar cobrança como perdida
+        function marcarComoPerdida(id) {
             Swal.fire({
-                title: 'Tem certeza?',
-                text: "Você não poderá reverter isso!",
+                title: 'Confirmar ação',
+                text: "Deseja marcar esta cobrança como perdida?",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sim, excluir!',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sim, marcar como perdida',
                 cancelButtonText: 'Cancelar'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    $.ajax({
-                        url: '/Pedido/ExcluirPedido',
-                        type: 'POST',
-                        data: { Id: id },
-                        success: function (response) {
-                            if (response.sucesso) {
-                                Swal.fire(
-                                    'Excluído!',
-                                    response.mensagem,
-                                    'success'
-                                ).then(() => {
-                                    location.reload();
-                                });
-                            } else {
-                                Swal.fire(
-                                    'Erro!',
-                                    response.mensagem,
-                                    'error'
-                                );
-                            }
+                    $.post('/Cobranca/MarcarComoPerdida', { id: id }, function(response) {
+                        if (response.sucesso) {
+                            Swal.fire(
+                                'Sucesso!',
+                                'Cobrança marcada como perdida',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Erro!',
+                                response.mensagem,
+                                'error'
+                            );
                         }
                     });
                 }
@@ -196,91 +209,15 @@
 
         // Pesquisa na tabela
         $(document).ready(function () {
-            $('#searchButton').click(function () {
-                searchTable();
-            });
-
-            $('#searchInput').keyup(function () {
-                searchTable();
-            });
+            $('#searchButton').click(searchTable);
+            $('#searchInput').keyup(searchTable);
 
             function searchTable() {
-                var value = $('#searchInput').val().toLowerCase();
-                $('#clientesTable tbody tr').filter(function () {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                const value = $('#searchInput').val().toLowerCase();
+                $('#cobrancasTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().includes(value));
                 });
             }
-
-            // Validação do formulário no modal
-            $('#clienteForm').submit(function (e) {
-                e.preventDefault();
-
-                var form = this;
-                if (!form.checkValidity()) {
-                    e.stopPropagation();
-                    form.classList.add('was-validated');
-                    return;
-                }
-
-                if(modoEdicao){
-                    var dados = {
-                        Id: $('#Id').val(),
-                        Descricao1: $('#Nome').val(),
-                        Descricao2: $('#Descricao').val(),
-                        Preco: $('#Preco').val(),
-                        Quantidade: $('#Quantidade').val()
-                    };
-                }
-                else{
-                    var dados = {
-                        Descricao1: $('#Nome').val(),
-                        Descricao2: $('#Descricao').val(),
-                        Preco: $('#Preco').val(),
-                        Quantidade: $('#Quantidade').val()
-                    };
-                }
-
-                debugger;
-                $.ajax({
-                    url: '/Produto/SalvarProduto',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(JSON.stringify(dados)),
-                    success: function (response) {
-                        if (response.sucesso) {
-                            $('#clienteModal').modal('hide');
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Sucesso!',
-                                text: response.mensagem,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Erro!',
-                                text: response.mensagem
-                            });
-                        }
-                    },
-                    error: function(xhr) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Erro!',
-                            text: 'Ocorreu um erro ao tentar salvar o produto.'
-                        });
-                    }
-                });
-            });
-
-            // Resetar o modal quando fechar
-            $('#clienteModal').on('hidden.bs.modal', function () {
-                $('#clienteForm')[0].reset();
-                $('#clienteForm').removeClass('was-validated');
-            });
         });
     </script>
 }

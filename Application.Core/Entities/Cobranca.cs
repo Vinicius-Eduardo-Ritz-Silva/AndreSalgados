@@ -8,7 +8,7 @@ namespace Application.Core.Entities
         #region -> Propriedades
 
         [Column("DT_DATACOBR")]
-        public DateTime DataCobranca { get; set; }
+        public DateTime? DataCobranca { get; set; }
 
         [Column("NR_VALOCOBR")]
         public decimal Valor { get; set; }
