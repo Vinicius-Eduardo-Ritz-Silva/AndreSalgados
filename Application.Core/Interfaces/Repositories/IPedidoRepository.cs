@@ -13,6 +13,8 @@ namespace Application.Core.Interfaces.Repositories
 
         public Task<Pedido> GetPedidoById(Guid Id);
 
+        public Pedido GetPedidoByProdutoPedido(Guid ProdutoPedidoId);
+
         public bool SalvarPedido(Pedido pedido);
     }
 }

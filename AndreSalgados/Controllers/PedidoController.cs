@@ -12,16 +12,19 @@ namespace AndreSalgados.Controllers
         private readonly IProdutoRepository _produtoRepository;
         private readonly IProdutoPedidoRepository _produtoPedidoRepository;
         private readonly IClienteRepository _clienteRepository;
+        private readonly ICobrancaRepository _cobrancaRepository;
 
         public PedidoController(IPedidoRepository pedidoRepository,
                                 IProdutoRepository produtoRepository,
                                 IProdutoPedidoRepository produtoPedidoRepository,
-                                IClienteRepository clienteRepository)
+                                IClienteRepository clienteRepository,
+                                ICobrancaRepository cobrancaRepository)
         {
             _pedidoRepository = pedidoRepository;
             _produtoRepository = produtoRepository;
             _produtoPedidoRepository = produtoPedidoRepository;
             _clienteRepository = clienteRepository;
+            _cobrancaRepository = cobrancaRepository;
         }
 
         [HttpGet]
@@ -89,25 +92,39 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
-        public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago)
+        public RetornoViewModel SalvarPedido(Guid Id, Guid ClienteId, bool Pago, bool Edicao)
         {
-            var pedido = new Pedido();
+            var pedido = new Pedido
+            {
+                Id = Id,
+                Inclusao = DateTime.Now,
+                Alteracao = DateTime.Now,
+                Ativo = true,
+                ClienteId = ClienteId,
+                Pago = Pago,
+                Edicao = Edicao
+            };
 
-            pedido.Id = Id;
-            pedido.Inclusao = DateTime.Now;
-            pedido.Alteracao = DateTime.Now;
-            pedido.Ativo = true;
-            pedido.ClienteId = ClienteId;
-            pedido.Pago = Pago;
+            var retornoSalvar = _pedidoRepository.SalvarPedido(pedido);
 
-            var retorno = _pedidoRepository.SalvarPedido(pedido);
-            
+            if (!retornoSalvar)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao salvar pedido!",
+                };
+
+            var retornoValidar = ValidarPedidoPago(pedido);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
+
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno 
-                    ? "Pedido salvo com sucesso!" 
-                    : "Erro ao salvar pedido!",
+                Sucesso = true,
+                Mensagem = pedido.Edicao
+                    ? "Pedido em edição!"
+                    : "Pedido salvo com sucesso!",
                 Dados = new
                 {
                     pedidoId = pedido.Id
@@ -140,14 +157,24 @@ namespace AndreSalgados.Controllers
                 };
             }
 
-            var retorno = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
+            var retornoAdicionarProduto = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
+
+            if (!retornoAdicionarProduto.Sucesso)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao vincular produto ao pedido!"
+                };
+
+            var retornoValidar = ValidarPedidoPago((Pedido)retornoAdicionarProduto.Dados);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno 
-                    ? "Produto vinculado ao pedido com sucesso!" 
-                    : "Erro ao vincular produto ao pedido!"
+                Sucesso = true,
+                Mensagem = "Produto vinculado ao pedido com sucesso!"
             };
         }
 
@@ -157,44 +184,104 @@ namespace AndreSalgados.Controllers
             if (Quantidade <= 0)
             {
                 return new RetornoViewModel
-                { 
+                {
                     Sucesso = false,
-                    Mensagem = "A quantidade deve ser maior que zero" 
+                    Mensagem = "A quantidade deve ser maior que zero"
                 };
             }
 
-            var retorno = _produtoPedidoRepository.AtualizarQuantidadeProdutoPedido(Id, Quantidade);
+            var retornoAtualizar = _produtoPedidoRepository.AtualizarQuantidadeProdutoPedido(Id, Quantidade);
+
+            if (!retornoAtualizar)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao vincular produto ao pedido!"
+                };
+
+            var pedido = _pedidoRepository.GetPedidoByProdutoPedido(Id);
+
+            var retornoValidar = ValidarPedidoPago(pedido);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno
-                    ? "Produto vinculado ao pedido com sucesso!"
-                    : "Erro ao vincular produto ao pedido!"
+                Sucesso = true,
+                Mensagem = "Produto vinculado ao pedido com sucesso!"
             };
         }
 
         [HttpPost]
         public RetornoViewModel RemoverProdutoPedido(Guid Id)
         {
-            var retorno = _produtoPedidoRepository.RemoverProdutoPedido(Id);
+            var retornoRemover = _produtoPedidoRepository.RemoverProdutoPedido(Id);
+
+            if (!retornoRemover)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Deu ruim!"
+                };
+
+            var pedido = _pedidoRepository.GetPedidoByProdutoPedido(Id);
+
+            var retornoValidar = ValidarPedidoPago(pedido);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
+                Sucesso = true,
+                Mensagem = "Deu bom!"
             };
         }
 
         [HttpPost]
         public async Task<RetornoViewModel> ExcluirPedido(Guid Id)
         {
-            var retorno = await _pedidoRepository.Excluir(Id);
+            var retornoExcluir = await _pedidoRepository.Excluir(Id);
+
+            if (!retornoExcluir)
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "Deu ruim!"
+                };
+
+            var pedido = await GetPedidoById(Id);
+
+            var retornoValidar = ValidarPedidoPago(pedido);
+
+            if (!retornoValidar.Sucesso)
+                return retornoValidar;
 
             return new RetornoViewModel
             {
-                Sucesso = retorno,
-                Mensagem = retorno ? "Deu bom!" : "Deu ruim!"
+                Sucesso = true,
+                Mensagem = "Deu bom!"
+            };
+        }
+
+        public RetornoViewModel ValidarPedidoPago(Pedido pedido)
+        {
+            if (!pedido.Pago)
+            {
+                var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
+
+                if (!retornoValidar)
+                    return new RetornoViewModel
+                    {
+                        Sucesso = false,
+                        Mensagem = "Erro ao gerar cobrança!",
+                    };
+            }
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = "Cobrança gerada com sucesso!",
             };
         }
     }

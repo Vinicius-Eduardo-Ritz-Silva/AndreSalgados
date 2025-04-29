@@ -13,82 +13,88 @@
     var clientes = ViewBag.Clientes as IEnumerable<Cliente>;
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <!-- Menu Lateral -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-            <div class="position-sticky pt-3">
-                <h6 class="sidebar-heading px-3 mt-4 mb-1 text-muted">
-                    <span>Produtos Disponíveis</span>
-                </h6>
-                <ul class="nav flex-column">
-                    @foreach (var produto in produtosDisponiveis)
-                    {
-                        <li class="nav-item">
-                            <button class="nav-link text-dark"
-                                    onclick="adicionarProduto('@produto.Id')">
-                                @produto.Descricao1
-                            </button>
-                        </li>
-                    }
-                </ul>
-            </div>
-        </div>
 
-        <!-- Conteúdo Principal -->
-        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <!-- Botão de menu para mobile (aparece apenas em telas pequenas) -->
+    <button class="btn btn-primary rounded-circle mobile-menu-btn" id="mobileMenuBtn">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="pedido-sidebar" id="pedidoSidebar">
+        <div class="pedido-sidebar-resizer" id="sidebarResizer"></div>
+        <div class="pedido-sidebar-header" id="sidebarHeader">
+            <h6 class="mb-0">Produtos Disponíveis</h6>
+            <i class="fas fa-chevron-right" id="sidebarToggleIcon"></i>
+        </div>
+        <div class="p-3">
+            <ul class="nav flex-column">
+                @foreach (var produto in produtosDisponiveis)
+                {
+                    <li class="nav-item">
+                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')">
+                            @produto.Descricao1
+                        </button>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+
+    <div class="pedido-main-content" id="pedidoMainContent">
+        <div class="container-fluid">
+            <!-- Cabeçalho -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
                 <div class="btn-toolbar mb-2 mb-md-0">
-                    <button class="btn btn-sm btn-primary" onclick="salvarPedido()">
-                        <i class="fas fa-save"></i> Salvar Pedido
+                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()">
+                        <i class="fas fa-save"></i> @(Model.Edicao ? "Editar" : "Salvar") Pedido
                     </button>
                 </div>
             </div>
 
-            <!-- Seção de Informações do Pedido -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5>Informações do Pedido</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="clienteSelect">Cliente</label>
-                                <select class="form-control" id="clienteSelect">
-                                    <option value="">Selecione um cliente</option>
-                                    @foreach (var cliente in clientes)
-                                    {
-                                        <option value="@cliente.Id" selected="@(Model.ClienteId == cliente.Id)">
-                                            @cliente.Nome
-                                        </option>
-                                    }
-                                </select>
-                            </div>
+        <!-- Seção de Informações do Pedido -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Informações do Pedido</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="clienteSelect">Cliente</label>
+                            <select class="form-control" id="clienteSelect">
+                                <option value="">Selecione um cliente</option>
+                                @foreach (var cliente in clientes)
+                                {
+                                    <option value="@cliente.Id" selected="@(Model.ClienteId == cliente.Id)">
+                                        @cliente.Nome
+                                    </option>
+                                }
+                            </select>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Status</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago ? "checked" : "")>
-                                    <label class="form-check-label" for="pagoCheckbox">
-                                        Pedido Pago
-                                    </label>
-                                </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago ? "checked" : "")>
+                                <label class="form-check-label" for="pagoCheckbox">
+                                    Pedido Pago
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
 
             <!-- Seção de Produtos -->
             <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Produtos do Pedido</h5>
                     <div>
-                        <span class="badge bg-primary mr-2">
-                            Quantidade Total: <span id="totalQuantidade">@Model.Quantidade</span>
+                        <span class="badge bg-primary me-2">
+                        Quantidade Total: <span id="totalQuantidade">@Model.Quantidade</span>
                         </span>
                         <span class="badge bg-success">
                             Valor Total: <span id="totalValor">@Model.Valor.ToString("C")</span>
@@ -97,7 +103,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="pedido-product-table table table-striped">
                             <thead>
                                 <tr>
                                     <th>Produto</th>
@@ -137,15 +143,16 @@
             </div>
         </div>
     </div>
-</div>
+
 
 @section Scripts {
     <script>
-        // Função para salvar o pedido (criação ou edição)
-        function salvarPedido() {
-            const pedidoId = '@(Model.Id == Guid.Empty ? TempData["NovoPedidoId"]?.ToString() ?? Guid.NewGuid().ToString() : Model.Id.ToString())';
+                // Função unificada para salvar/editar
+        function salvarOuEditarPedido() {
+            const pedidoId = '@pedidoId';
             const clienteId = $('#clienteSelect').val();
             const pago = $('#pagoCheckbox').is(':checked');
+            const edicao = @Json.Serialize(Model.Edicao);
 
             if (!clienteId) {
                 Swal.fire('Atenção', 'Selecione um cliente', 'warning');
@@ -158,11 +165,11 @@
                 data: {
                     Id: pedidoId,
                     ClienteId: clienteId,
-                    Pago: pago
+                    Pago: pago,
+                    Edicao: !edicao
                 },
                 success: function(response) {
                     if (response.sucesso) {
-
                         window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
                     } else {
                         Swal.fire('Erro', response.Mensagem, 'error');
@@ -246,9 +253,9 @@
             if (input.value < 1) {
                 input.value = 1;
             }
-    
+
             input.value = input.value.replace(/[^0-9]/g, '');
-    
+
             input.value = parseInt(input.value) || 1;
         }
 
@@ -302,11 +309,58 @@
             });
         }
 
-        // Se for um novo pedido, focar no campo de cliente
+        // Controle do sidebar
         $(document).ready(function() {
-                if ('@pedidoId' === '00000000-0000-0000-0000-000000000000') {
-                $('#clienteSelect').focus();
+            if (@Json.Serialize(Model.Edicao)) {
+                $('#clienteSelect').prop('disabled', true);
+                $('#pagoCheckbox').prop('disabled', true);
+            }
+
+            // Toggle do sidebar
+            $('#sidebarHeader, #mobileMenuBtn').click(function() {
+                $('#pedidoSidebar').toggleClass('active');
+                $('body').toggleClass('pedido-sidebar-active');
+                $('#sidebarToggleIcon').toggleClass('fa-chevron-right fa-chevron-left');
+            });
+
+            // Resizer apenas em desktop
+            if (window.innerWidth >= 992) {
+                const sidebar = $('#pedidoSidebar');
+                const resizer = $('#sidebarResizer');
+
+                resizer.on('mousedown', function(e) {
+                    e.preventDefault();
+                    $(document).on('mousemove', resize);
+                    $(document).on('mouseup', stopResize);
+                });
+
+                function resize(e) {
+                    const newWidth = Math.max(250, Math.min(e.clientX, 400));
+                    sidebar.css('width', newWidth + 'px');
+                    $('#pedidoMainContent').css('margin-left', newWidth + 'px');
+                }
+
+                function stopResize() {
+                    $(document).off('mousemove', resize);
+                }
+            }
+
+            // Ajuste inicial
+            if (window.innerWidth >= 992) {
+                $('#pedidoSidebar').addClass('active');
             }
         });
+
+        // Ajuste no redimensionamento
+        $(window).resize(function() {
+            if (window.innerWidth >= 992) {
+                $('#pedidoSidebar').addClass('active');
+                $('body').addClass('pedido-sidebar-active');
+            } else {
+                $('#pedidoSidebar').removeClass('active');
+                $('body').removeClass('pedido-sidebar-active');
+            }
+        });
+
     </script>
 }

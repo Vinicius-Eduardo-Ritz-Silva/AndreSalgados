@@ -49,25 +49,41 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public Pedido GetPedidoByProdutoPedido(Guid ProdutoPedidoId)
+        {
+            try
+            {
+                var produtoPedido = _context.ProdutosPedidos.FirstOrDefault(pp => pp.Id == ProdutoPedidoId);
+                var pedido = _context.Pedidos.FirstOrDefault(p => p.Id == produtoPedido.PedidoId);
+
+                return pedido;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public bool SalvarPedido(Pedido pedido)
         {
             try
             {
-                if (!pedido.Pago)
-                {
-                    var cobranca = new Cobranca();
-
-                    pedido.CobrancaId = cobranca.Id;
-                }
-
                 var pedidoExistente = _context.Pedidos.AsNoTracking()
                     .FirstOrDefault(p => p.Id == pedido.Id);
 
                 if (pedidoExistente == null)
+                {
                     _context.Add(pedido);
-
+                }
                 else
+                {
+                    pedido.Inclusao = pedidoExistente.Inclusao;
+                    pedido.Valor = pedidoExistente.Valor;
+                    pedido.Quantidade = pedidoExistente.Quantidade;
+
                     _context.Update(pedido);
+                }
+                    
 
                 _context.SaveChanges();
 
