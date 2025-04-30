@@ -49,6 +49,15 @@ namespace Application.Core.Entities
             }
         }
 
+        [NotMapped]
+        public string ValorReais
+        {
+            get
+            {
+                return $"R$ {Valor}";
+            }
+        }
+
         #endregion
     }
 }

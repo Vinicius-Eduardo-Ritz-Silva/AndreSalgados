@@ -10,5 +10,9 @@ namespace Application.Core.Interfaces.Repositories
     public interface ICobrancaRepository : IMainRepository<Cobranca>
     {
         public bool GerarCobranca(Pedido pedido);
+
+        public bool DefinirDataCobranca(Guid id, DateTime dataCobranca);
+
+        public bool MarcarComoPerdida(Guid id);
     }
 }

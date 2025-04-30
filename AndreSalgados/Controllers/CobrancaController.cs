@@ -33,20 +33,28 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel DefinirDataCobranca(Guid id, DateTime dataCobranca)
         {
+            var retorno = _cobrancaRepository.DefinirDataCobranca(id, dataCobranca);
+
             return new RetornoViewModel
             {
-                Sucesso = false,
-                Mensagem = "Implementar método Definir Data Cobrança"
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Data definida com sucesso!" 
+                    : "Erro ao definir a data!"
             };
         }
 
         [HttpPost]
         public RetornoViewModel MarcarComoPerdida(Guid id)
         {
+            var retorno = _cobrancaRepository.MarcarComoPerdida(id);
+
             return new RetornoViewModel
             {
-                Sucesso = false,
-                Mensagem = "Implementar método Marcar Como Perdida"
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Cobrança marcada como perdida!" 
+                    : "Erro ao marcar mudança como perdida!"
             };
         }
     }

@@ -49,8 +49,8 @@
                         {
                             <tr>
                                 <td>@Html.DisplayFor(modelItem => item.Cliente.Nome)</td>
-                                <td>@Html.DisplayFor(modelItem => item.Valor)</td>
-                                <td>@Html.DisplayFor(modelItem => item.DataCobranca)</td>
+                                <td>@item.Valor.ToString("C")</td>
+                                <td>@item.DataCobranca?.ToString("dd/MM/yyyy")</td>
                                 <td>
                                     @if (item.CobrancaPerdida)
                                     {

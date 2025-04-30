@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Drawing;
 
 namespace Application.Core.Entities
 {
@@ -28,6 +29,19 @@ namespace Application.Core.Entities
 
         [ForeignKey("TipoId")]
         public virtual TipoProduto Tipo { get; set; }
+
+        #endregion
+
+        #region -> NotMappeds
+
+        [NotMapped]
+        public string PrecoReais
+        {
+            get
+            {
+                return $"R$ {Preco}";
+            }
+        }
 
         #endregion
     }

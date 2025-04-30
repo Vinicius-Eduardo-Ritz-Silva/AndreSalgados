@@ -19,6 +19,26 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
+        public bool DefinirDataCobranca(Guid id, DateTime dataCobranca)
+        {
+            try
+            {
+                var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
+
+                cobranca.DataCobranca = dataCobranca;
+
+                _context.Update(cobranca);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool GerarCobranca(Pedido pedido)
         {
             try
@@ -63,6 +83,26 @@ namespace Infraestructure.Repositories
                 return true;
             }
             catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool MarcarComoPerdida(Guid id)
+        {
+            try
+            {
+                var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
+
+                cobranca.CobrancaPerdida = true;
+
+                _context.Update(cobranca);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
             {
                 return false;
             }
