@@ -1,4 +1,214 @@
-﻿@page
-@model AndreSalgados.Views.Cobranca.IndexModel
+﻿@using Application.Core.Entities;
+@model IEnumerable<Cobranca>
+
 @{
+    ViewData["Title"] = "Cobranças";
+}
+
+@section Styles{
+    <style>
+        .modal-body, .calendario {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center;
+        }
+    </style>
+}
+
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mt-4"><i class="fas fa-dollar-sign me-2"></i>Cobranças</h1>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-table me-1"></i> Lista de Cobranças</h5>
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar...">
+                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table id="clientesTable" class="table table-striped table-hover table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Valor Total</th>
+                            <th>Data Cobrança</th>
+                            <th>Status</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => item.Cliente.Nome)</td>
+                                <td>@item.Valor.ToString("C")</td>
+                                <td>@item.DataCobranca?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (item.CobrancaPerdida)
+                                    {
+                                        <span class="badge bg-danger">Perdida</span>
+                                    }
+                                    else if (!item.DataCobranca.HasValue)
+                                    {
+                                        <span class="badge bg-warning">Aberta</span>
+                                    }
+                                    else if (item.DataCobranca.Value.Date > DateTime.Today)
+                                    {
+                                        <span class="badge bg-primary">Agendada</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Vencida</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <div class="btn-group" role="group">
+                                        <button onclick="mostrarCalendario('@item.Id')"
+                                                class="btn btn-sm btn-info" title="Setar Data Cobrança">
+                                            <i class="fas fa-calendar"></i> Definir Data
+                                        </button>
+                                        <button onclick="marcarComoPerdida('@item.Id')"
+                                                class="btn btn-sm btn-danger" title="Cobrança Perdida">
+                                            <i class="fas fa-x"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal do Calendário -->
+<div class="modal fade" id="calendarioModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Selecione a Data</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body calendario">
+                <input type="text" id="flatpickr" class="form-control mb-3" placeholder="Selecione a data" readonly />
+                <input type="hidden" id="cobrancaId" value="" />
+            </div>
+            <div class="modal-footer d-flex justify-content-end">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary ms-2" onclick="definirDataCobranca()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let cobrancaIdAtual = '';
+
+        function mostrarCalendario(id) {
+            cobrancaIdAtual = id;
+            $('#cobrancaId').val(id);
+
+            // inicializa flatpickr somente uma vez
+            if (!$('#flatpickr').hasClass('flatpickr-input')) {
+            flatpickr("#flatpickr", {
+                locale: "pt",
+                dateFormat: "Y-m-d",
+                defaultDate: null,
+                inline: true,
+                onChange: function(selectedDates, dateStr) {
+                // mostra footer quando selecionar
+                $('#calendarioModal .modal-footer').show();
+                }
+            });
+            }
+
+            // mostra modal
+            const modal = new bootstrap.Modal($('#calendarioModal'));
+            modal.show();
+            $('#calendarioModal .modal-footer').hide();
+        }
+
+
+        // Função para definir a data de cobrança
+        function definirDataCobranca() {
+          const selectedDate = $('#flatpickr').val();
+          if (!selectedDate) {
+            Swal.fire('Atenção', 'Selecione uma data no calendário', 'warning');
+            return;
+          }
+          $.post('/Cobranca/DefinirDataCobranca', {
+            id: cobrancaIdAtual,
+            dataCobranca: selectedDate
+          }, function(response) {
+            if (response.sucesso) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Data de cobrança definida.',
+                timer: 1500,
+                showConfirmButton: false
+              }).then(() => location.reload());
+            } else {
+              Swal.fire('Erro', response.mensagem, 'error');
+            }
+          });
+        }
+
+        // Função para marcar cobrança como perdida
+        function marcarComoPerdida(id) {
+            Swal.fire({
+                title: 'Confirmar ação',
+                text: "Deseja marcar esta cobrança como perdida?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Sim, marcar como perdida',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.post('/Cobranca/MarcarComoPerdida', { id: id }, function(response) {
+                        if (response.sucesso) {
+                            Swal.fire(
+                                'Sucesso!',
+                                'Cobrança marcada como perdida',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Erro!',
+                                response.mensagem,
+                                'error'
+                            );
+                        }
+                    });
+                }
+            });
+        }
+
+        // Pesquisa na tabela
+        $(document).ready(function () {
+            $('#searchButton').click(searchTable);
+            $('#searchInput').keyup(searchTable);
+
+            function searchTable() {
+                const value = $('#searchInput').val().toLowerCase();
+                $('#cobrancasTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().includes(value));
+                });
+            }
+        });
+    </script>
 }

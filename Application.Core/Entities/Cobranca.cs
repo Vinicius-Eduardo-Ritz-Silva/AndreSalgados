@@ -8,7 +8,7 @@ namespace Application.Core.Entities
         #region -> Propriedades
 
         [Column("DT_DATACOBR")]
-        public DateTime DataCobranca { get; set; }
+        public DateTime? DataCobranca { get; set; }
 
         [Column("NR_VALOCOBR")]
         public decimal Valor { get; set; }
@@ -46,6 +46,15 @@ namespace Application.Core.Entities
 
                 else
                     return Valor * ((Desconto ?? 100) / 100m);
+            }
+        }
+
+        [NotMapped]
+        public string ValorReais
+        {
+            get
+            {
+                return $"R$ {Valor}";
             }
         }
 

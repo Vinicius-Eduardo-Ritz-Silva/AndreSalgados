@@ -322,3 +322,46 @@ body {
         bottom: 70px;
     }
 }
+
+#calendar {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+
+.badge.bg-error {
+    background-color: #dc3545;
+}
+
+.fc-daygrid-day-number {
+    color: #495057;
+}
+
+.fc .fc-daygrid-day.fc-day-today {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* Corrige a linha de dias da semana (dom, seg, ter...) */
+.fc .fc-col-header-cell-cushion {
+    padding: 4px 0;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    text-align: center;
+}
+
+/* —— Ajuste no modal para responsividade —— */
+.modal-dialog {
+    max-width: 25em; 
+    max-height: auto;
+    margin: 1.75rem auto;
+    align-items: center;
+}
+
+.modal-content {
+    overflow: hidden; /* evita barras indesejadas */
+}
