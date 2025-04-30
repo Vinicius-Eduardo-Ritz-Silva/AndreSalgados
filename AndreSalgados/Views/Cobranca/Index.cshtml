@@ -5,6 +5,16 @@
     ViewData["Title"] = "Cobranças";
 }
 
+@section Styles{
+    <style>
+        .modal-body, .calendario {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center;
+        }
+    </style>
+}
+
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mt-4"><i class="fas fa-dollar-sign me-2"></i>Cobranças</h1>
@@ -81,16 +91,16 @@
 </div>
 
 <!-- Modal do Calendário -->
-<div class="modal fade" id="calendarioModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="calendarioModal" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Selecione a Data</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <div id="calendar"></div>
-                <input type="hidden" id="cobrancaId" value="">
+            <div class="modal-body calendario">
+                <input type="text" id="flatpickr" class="form-control mb-3" placeholder="Selecione a data" readonly />
+                <input type="hidden" id="cobrancaId" value="" />
             </div>
             <div class="modal-footer d-flex justify-content-end">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -102,75 +112,56 @@
 
 @section Scripts {
     <script>
-        // Variáveis globais
-        let calendar;
         let cobrancaIdAtual = '';
 
-        // Função para mostrar o calendário
         function mostrarCalendario(id) {
             cobrancaIdAtual = id;
             $('#cobrancaId').val(id);
 
-            // Inicializa o calendário se ainda não existir
-            if (!calendar) {
-                const calendarEl = document.getElementById('calendar');
-
-                calendar = new FullCalendar.Calendar(calendarEl, {
-                    initialView: 'dayGridMonth',
-                    locale: 'pt-br',
-                    headerToolbar: {
-                        left: 'prev',
-                        center: 'title',
-                        right: 'next'
-                    },
-                    dateClick: function(info) {
-                        // Limpa seleções anteriores
-                        $('.fc-day').removeClass('fc-day-selected');
-                        // Marca o dia selecionado
-                        $(info.dayEl).addClass('fc-day-selected');
-                        $('#calendarioModal .modal-footer').show();
-                    },
-                    dayCellClassNames: 'fc-day-selectable'
-                });
-
-                calendar.render();
+            // inicializa flatpickr somente uma vez
+            if (!$('#flatpickr').hasClass('flatpickr-input')) {
+            flatpickr("#flatpickr", {
+                locale: "pt",
+                dateFormat: "Y-m-d",
+                defaultDate: null,
+                inline: true,
+                onChange: function(selectedDates, dateStr) {
+                // mostra footer quando selecionar
+                $('#calendarioModal .modal-footer').show();
+                }
+            });
             }
 
-            // Mostra o modal
-            const modal = new bootstrap.Modal(document.getElementById('calendarioModal'));
+            // mostra modal
+            const modal = new bootstrap.Modal($('#calendarioModal'));
             modal.show();
-
-            // Esconde o footer inicialmente
             $('#calendarioModal .modal-footer').hide();
         }
 
+
         // Função para definir a data de cobrança
         function definirDataCobranca() {
-            const selectedDate = $('.fc-day-selected').attr('data-date');
-
-            if (!selectedDate) {
-                Swal.fire('Atenção', 'Selecione uma data no calendário', 'warning');
-                return;
+          const selectedDate = $('#flatpickr').val();
+          if (!selectedDate) {
+            Swal.fire('Atenção', 'Selecione uma data no calendário', 'warning');
+            return;
+          }
+          $.post('/Cobranca/DefinirDataCobranca', {
+            id: cobrancaIdAtual,
+            dataCobranca: selectedDate
+          }, function(response) {
+            if (response.sucesso) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Sucesso!',
+                text: 'Data de cobrança definida.',
+                timer: 1500,
+                showConfirmButton: false
+              }).then(() => location.reload());
+            } else {
+              Swal.fire('Erro', response.mensagem, 'error');
             }
-
-            $.post('/Cobranca/DefinirDataCobranca', {
-                id: cobrancaIdAtual,
-                dataCobranca: selectedDate
-            }, function(response) {
-                if (response.sucesso) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sucesso!',
-                        text: 'Data de cobrança definida com sucesso',
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        location.reload();
-                    });
-                } else {
-                    Swal.fire('Erro', response.mensagem, 'error');
-                }
-            });
+          });
         }
 
         // Função para marcar cobrança como perdida

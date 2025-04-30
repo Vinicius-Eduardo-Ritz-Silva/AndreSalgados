@@ -353,3 +353,15 @@ body {
     display: block;
     text-align: center;
 }
+
+/* —— Ajuste no modal para responsividade —— */
+.modal-dialog {
+    max-width: 25em; 
+    max-height: auto;
+    margin: 1.75rem auto;
+    align-items: center;
+}
+
+.modal-content {
+    overflow: hidden; /* evita barras indesejadas */
+}
