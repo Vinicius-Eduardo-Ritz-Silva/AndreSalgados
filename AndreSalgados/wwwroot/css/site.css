@@ -698,6 +698,10 @@ body {
         }
 }
 
+#produtosTable_filter{
+    display: none;
+}
+
 /* Loading Overlay Styles */
 .loading-overlay {
     position: fixed;
