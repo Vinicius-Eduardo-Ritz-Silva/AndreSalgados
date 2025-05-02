@@ -1,3 +1,5 @@
+/* Higienizar!!! */
+
 /* Variáveis CSS */
 :root {
     --primary-color: #0d6efd;
@@ -590,3 +592,110 @@ body {
         margin: 0 2px !important;
     }
 }
+
+/* Estilos específicos para a tabela de produtos */
+#produtosTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    #produtosTable th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-weight: 600;
+    }
+
+    #produtosTable td,
+    #produtosTable th {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+
+    #produtosTable tbody tr {
+        transition: all 0.2s ease;
+    }
+
+        #produtosTable tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+/* Responsividade específica para a tabela de produtos */
+@media (max-width: 576px) {
+    #produtosTable thead {
+        display: none;
+    }
+
+    #produtosTable tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+
+    #produtosTable td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+
+        #produtosTable td:before {
+            content: attr(data-label);
+            font-weight: bold;
+            margin-right: 1rem;
+            flex: 1;
+            color: #6c757d;
+        }
+
+        #produtosTable td:last-child {
+            border-bottom: none;
+            justify-content: center;
+        }
+}
+
+/* Estilo para o contador de produtos */
+#totalProdutos {
+    font-size: 0.9rem;
+    color: #6c757d;
+    padding: 0.5rem 0;
+}
+
+    #totalProdutos strong {
+        color: #495057;
+        font-weight: 600;
+    }
+
+@media (max-width: 576px) {
+    #totalProdutos {
+        font-size: 0.8rem;
+        text-align: center;
+        width: 100%;
+    }
+}
+
+/* Ajustes para os botões de ação na tabela */
+#produtosTable .btn-group .btn-sm {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    margin: 0 2px;
+}
+
+@media (max-width: 576px) {
+    #produtosTable .btn-group {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+        #produtosTable .btn-group .btn-sm {
+            margin: 2px;
+            flex: 1;
+            max-width: 45%;
+        }
+}
+
+/* Higienizar!!! */
