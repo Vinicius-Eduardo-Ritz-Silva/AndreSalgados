@@ -201,12 +201,12 @@ body {
 /* ===== Sidebar Responsiva ===== */
 .pedido-sidebar {
     position: fixed;
-    top: 56px; /* Altura da navbar */
+    top: 58px; /* Altura da navbar */
     bottom: 60px; /* Altura do footer */
     left: -280px;
     width: 280px;
     z-index: 1020;
-    padding: 1rem 0;
+    padding: 0 0 1rem 0;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     transition: all 0.3s ease;
     background-color: #f8f9fa;
