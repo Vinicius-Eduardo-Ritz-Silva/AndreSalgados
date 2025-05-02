@@ -499,3 +499,94 @@ body {
 #clientesTable_filter{
     display: none;
 }
+
+/* Estilo personalizado para a paginação */
+.dataTables_paginate .paginate_button {
+    border: none !important;
+    background: none !important;
+    color: #6c757d !important;
+    margin: 0 3px !important;
+    min-width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+    transition: all 0.3s ease;
+    position: relative;
+    font-weight: 500;
+}
+
+    /* Botão ativo (página atual) */
+    .dataTables_paginate .paginate_button.current {
+        color: #0d6efd !important;
+        font-weight: bold !important;
+    }
+
+        .dataTables_paginate .paginate_button.current:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(13, 110, 253, 0.1);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+    /* Efeito hover para todos os botões */
+    .dataTables_paginate .paginate_button:hover:not(.disabled) {
+        color: #0d6efd !important;
+        background: none !important;
+    }
+
+        .dataTables_paginate .paginate_button:hover:not(.disabled):before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+    /* Botões de navegação (anterior/próximo) */
+    .dataTables_paginate .paginate_button.previous,
+    .dataTables_paginate .paginate_button.next {
+        font-size: 0 !important; /* Esconde o texto */
+    }
+
+        .dataTables_paginate .paginate_button.previous:after,
+        .dataTables_paginate .paginate_button.next:after {
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .dataTables_paginate .paginate_button.previous:after {
+            content: "\f053"; /* Ícone de seta para esquerda */
+        }
+
+        .dataTables_paginate .paginate_button.next:after {
+            content: "\f054"; /* Ícone de seta para direita */
+        }
+
+    /* Botões desabilitados */
+    .dataTables_paginate .paginate_button.disabled,
+    .dataTables_paginate .paginate_button.disabled:hover {
+        opacity: 0.5;
+        cursor: default;
+    }
+
+/* Ajustes para mobile */
+@media (max-width: 576px) {
+    .dataTables_paginate .paginate_button {
+        min-width: 28px;
+        height: 28px;
+        margin: 0 2px !important;
+    }
+}

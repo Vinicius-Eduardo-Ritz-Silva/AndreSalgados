@@ -213,9 +213,10 @@
                     }
                 },
                 "drawCallback": function(settings) {
-                    // Adiciona ícones aos botões de paginação
-                    $('.paginate_button.previous').html('<i class="fas fa-chevron-left"></i>');
-                    $('.paginate_button.next').html('<i class="fas fa-chevron-right"></i>');
+                    formataNumeroTelefone();
+                },
+                "initComplete": function(settings, json) {
+                    formataNumeroTelefone();
                 }
             });
 
@@ -232,14 +233,16 @@
             });
 
 
-            $('.telefone-cell').each(function() {
-                const numero = $(this).text().trim();
-                if (numero.length === 11) {
-                    $(this).text(numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3'));
-                } else if (numero.length === 10) {
-                    $(this).text(numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3'));
-                }
-            });
+            function formataNumeroTelefone() {
+                $('.telefone-cell').each(function() {
+                    const numero = $(this).text().trim();
+                    if (numero.length === 11) {
+                        $(this).text(numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3'));
+                    } else if (numero.length === 10) {
+                        $(this).text(numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3'));
+                    }
+                });
+            }
 
             $('#searchButton').click(function () {
                 searchTable();
