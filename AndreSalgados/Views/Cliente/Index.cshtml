@@ -18,7 +18,7 @@
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
                 <h5 class="mb-3 mb-md-0"><i class="fas fa-table me-1"></i> Lista de Clientes</h5>
                 <div class="d-flex flex-column flex-md-row gap-3">
-                    <div class="input-group" style="min-width: 250px;">
+                    <div class="input-group" style="min-width: 200px;">
                         <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar...">
                         <button class="btn btn-outline-secondary" type="button" id="searchButton">
                             <i class="fas fa-search"></i>
@@ -61,14 +61,6 @@
                         }
                     </tbody>
                 </table>
-            </div>
-        </div>
-        <div class="card-footer bg-white">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
-                <div id="totalClientes" class="text-muted mb-2 mb-md-0">
-                    Total de <strong>@Model.Count()</strong> clientes cadastrados
-                </div>
-                <div class="dataTables_paginate"></div>
             </div>
         </div>
     </div>
@@ -203,7 +195,7 @@
         // Pesquisa na tabela
         $(document).ready(function () {
             var table = $('#clientesTable').DataTable({
-                "pageLength": 50,
+                "pageLength": 10,
                 "lengthMenu": [10, 25, 50, 100],
                 "responsive": true,
                 "dom": '<"top"<"d-flex justify-content-between align-items-center"lf>>rt<"bottom"<"d-flex justify-content-between align-items-center"ip>><"clear">',
@@ -213,7 +205,6 @@
                     "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
                     "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                     "infoFiltered": "(filtrado de _MAX_ registros totais)",
-                    "search": "Pesquisar:",
                     "paginate": {
                         "first": "Primeira",
                         "last": "Última",
@@ -225,11 +216,6 @@
                     // Adiciona ícones aos botões de paginação
                     $('.paginate_button.previous').html('<i class="fas fa-chevron-left"></i>');
                     $('.paginate_button.next').html('<i class="fas fa-chevron-right"></i>');
-
-                    // Atualiza o elemento que mostra o total
-                    var info = this.api().page.info();
-                    $('#totalClientes').html('Total de <strong>' + info.recordsTotal + '</strong> clientes | Mostrando ' +
-                                           info.start + ' a ' + info.end + ' de ' + info.recordsDisplay);
                 }
             });
 

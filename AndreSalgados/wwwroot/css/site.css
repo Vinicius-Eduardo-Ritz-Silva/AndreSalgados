@@ -369,6 +369,7 @@ body {
 /* Estilos para a paginação e tabela responsiva */
 .dataTables_wrapper {
     position: relative;
+    padding: 0.5em;
 }
 
 .dataTables_info {
@@ -493,17 +494,8 @@ body {
             border-bottom: none;
             justify-content: center;
         }
+}
 
-        /* Adiciona labels para as células */
-        #clientesTable td:nth-child(1):before {
-            content: "Nome:";
-        }
-
-        #clientesTable td:nth-child(2):before {
-            content: "Número:";
-        }
-
-        #clientesTable td:nth-child(3):before {
-            content: "Endereço:";
-        }
+#clientesTable_filter{
+    display: none;
 }
