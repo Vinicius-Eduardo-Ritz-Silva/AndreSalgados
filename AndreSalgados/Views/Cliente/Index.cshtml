@@ -192,6 +192,26 @@
 
         // Pesquisa na tabela
         $(document).ready(function () {
+            var table = $('#clientesTable').DataTable({
+                "pageLength": 50, // Mostra 50 registros por página
+                "lengthMenu": [10, 25, 50, 100], // Opções de itens por página
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "Nenhum registro encontrado",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "Nenhum registro disponível",
+                    "infoFiltered": "(filtrado de _MAX_ registros totais)",
+                    "search": "Pesquisar:",
+                    "paginate": {
+                        "first": "Primeira",
+                        "last": "Última",
+                        "next": "Próxima",
+                        "previous": "Anterior"
+                    }
+                }
+            });
+
+
             $('.telefone-cell').each(function() {
                 const numero = $(this).text().trim();
                 if (numero.length === 11) {
