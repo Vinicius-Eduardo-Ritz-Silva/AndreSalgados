@@ -79,6 +79,14 @@
     <!-- Conteúdo Principal -->
     <main class="flex-grow-1">
         <div class="container py-4">
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="loading-text mt-3">Carregando...</p>
+                </div>
+            </div>
             @RenderBody()
         </div>
     </main>
