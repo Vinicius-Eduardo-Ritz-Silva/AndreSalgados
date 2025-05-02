@@ -15,17 +15,19 @@
 
     <div class="card mb-4">
         <div class="card-header bg-white">
-            <div class="d-flex justify-content-between align-items-center">
-                <h5 class="mb-0"><i class="fas fa-table me-1"></i> Lista de Clientes</h5>
-                <div class="input-group" style="width: 300px;">
-                    <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar...">
-                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                        <i class="fas fa-search"></i>
-                    </button>
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <h5 class="mb-3 mb-md-0"><i class="fas fa-table me-1"></i> Lista de Clientes</h5>
+                <div class="d-flex flex-column flex-md-row gap-3">
+                    <div class="input-group" style="min-width: 250px;">
+                        <input type="text" id="searchInput" class="form-control" placeholder="Pesquisar...">
+                        <button class="btn btn-outline-secondary" type="button" id="searchButton">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="card-body">
+        <div class="card-body p-0">
             <div class="table-responsive">
                 <table id="clientesTable" class="table table-striped table-hover table-bordered">
                     <thead class="table-light">
@@ -46,7 +48,7 @@
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <button onclick="detalhesCliente('@item.Id')"
-                                           class="btn btn-sm btn-info" title="Detalhes">
+                                                class="btn btn-sm btn-info" title="Detalhes">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                         <button onclick="confirmDelete('@item.Id')"
@@ -59,11 +61,14 @@
                         }
                     </tbody>
                 </table>
-                <div class="card-footer">
-                    <div class="text-muted" id="totalClientes">
-                        Total de <strong>@Model.Count()</strong> clientes cadastrados
-                    </div>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+                <div id="totalClientes" class="text-muted mb-2 mb-md-0">
+                    Total de <strong>@Model.Count()</strong> clientes cadastrados
                 </div>
+                <div class="dataTables_paginate"></div>
             </div>
         </div>
     </div>
@@ -198,22 +203,46 @@
         // Pesquisa na tabela
         $(document).ready(function () {
             var table = $('#clientesTable').DataTable({
-                "pageLength": 50, // Mostra 50 registros por página
-                "lengthMenu": [10, 25, 50, 100], // Opções de itens por página
+                "pageLength": 50,
+                "lengthMenu": [10, 25, 50, 100],
+                "responsive": true,
+                "dom": '<"top"<"d-flex justify-content-between align-items-center"lf>>rt<"bottom"<"d-flex justify-content-between align-items-center"ip>><"clear">',
                 "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "lengthMenu": "Mostrar _MENU_ registros",
                     "zeroRecords": "Nenhum registro encontrado",
-                    "info": "Mostrando página _PAGE_ de _PAGES_",
-                    "infoEmpty": "Nenhum registro disponível",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
                     "infoFiltered": "(filtrado de _MAX_ registros totais)",
                     "search": "Pesquisar:",
                     "paginate": {
                         "first": "Primeira",
                         "last": "Última",
-                        "next": "Próxima",
-                        "previous": "Anterior"
+                        "next": "<i class='fas fa-chevron-right'></i>",
+                        "previous": "<i class='fas fa-chevron-left'></i>"
                     }
+                },
+                "drawCallback": function(settings) {
+                    // Adiciona ícones aos botões de paginação
+                    $('.paginate_button.previous').html('<i class="fas fa-chevron-left"></i>');
+                    $('.paginate_button.next').html('<i class="fas fa-chevron-right"></i>');
+
+                    // Atualiza o elemento que mostra o total
+                    var info = this.api().page.info();
+                    $('#totalClientes').html('Total de <strong>' + info.recordsTotal + '</strong> clientes | Mostrando ' +
+                                           info.start + ' a ' + info.end + ' de ' + info.recordsDisplay);
                 }
+            });
+
+            // Move o seletor de itens por página para o cabeçalho
+            $('.dataTables_length').addClass('mb-3');
+    
+            // Atualiza a pesquisa personalizada para usar a do DataTables
+            $('#searchButton').click(function() {
+                table.search($('#searchInput').val()).draw();
+            });
+    
+            $('#searchInput').keyup(function() {
+                table.search($(this).val()).draw();
             });
 
 
@@ -316,6 +345,22 @@
                 $('#clienteForm')[0].reset();
                 $('#clienteForm').removeClass('was-validated');
             });
+        });
+
+        // Adapta a tabela para mobile
+        function adaptTableForMobile() {
+            if ($(window).width() < 576) {
+                $('#clientesTable td').each(function() {
+                    var cellIndex = $(this).index() + 1;
+                    var headerText = $('#clientesTable th').eq(cellIndex - 1).text();
+                    $(this).attr('data-label', headerText);
+                });
+            }
+        }
+
+        // Executa na carga e no redimensionamento da tela
+        $(window).on('load resize', function() {
+            adaptTableForMobile();
         });
     </script>
 }
