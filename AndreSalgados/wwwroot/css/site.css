@@ -755,6 +755,10 @@ body {
         background-color: #198754 !important;
     }
 
+    .badge.bg-spoild {
+        background-color: #ff6a00 !important;
+    }
+
 /* Ajustes para mobile */
 @media (max-width: 768px) {
     .card-header .input-group {

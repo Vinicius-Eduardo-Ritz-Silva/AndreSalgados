@@ -54,7 +54,11 @@
                                 <td>@item.Valor.ToString("C")</td>
                                 <td>@item.DataCobranca?.ToString("dd/MM/yyyy")</td>
                                 <td>
-                                    @if (item.CobrancaPerdida)
+                                    @if (item.Valor == 0)
+                                    {
+                                        <span class="badge bg-success">Quitada</span>
+                                    }
+                                    else if (item.CobrancaPerdida)
                                     {
                                         <span class="badge bg-danger">Perdida</span>
                                     }
@@ -68,7 +72,7 @@
                                     }
                                     else
                                     {
-                                        <span class="badge bg-success">Vencida</span>
+                                        <span class="badge bg-spoild">Vencida</span>
                                     }
                                 </td>
                                 <td class="text-center">

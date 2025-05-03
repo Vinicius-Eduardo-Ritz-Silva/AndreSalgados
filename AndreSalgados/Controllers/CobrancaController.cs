@@ -33,10 +33,14 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel QuitarCobranca(Guid id)
         {
+            var retorno = _cobrancaRepository.QuitarCobranca(id);
+
             return new RetornoViewModel
             {
-                Sucesso = false,
-                Mensagem = "Implementar metodo Quitar Cobranca!"
+                Sucesso = retorno,
+                Mensagem = retorno 
+                    ? "Cobranca quitada com sucesso!" 
+                    : "Erro ao quitar cobranca!"
             };
         }
 

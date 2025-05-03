@@ -11,6 +11,8 @@ namespace Application.Core.Interfaces.Repositories
     {
         public bool GerarCobranca(Pedido pedido);
 
+        public bool QuitarCobranca(Guid id);
+
         public bool DefinirDataCobranca(Guid id, DateTime dataCobranca);
 
         public bool MarcarComoPerdida(Guid id);
