@@ -27,7 +27,17 @@ namespace AndreSalgados.Controllers
         {
             var cobranca = await _cobrancaRepository.GetWithInclude(p => p.Cliente);
 
-            return cobranca.OrderBy(co => co.Cliente.Nome);
+            return cobranca.OrderBy(co => co.Valor);
+        }
+
+        [HttpPost]
+        public RetornoViewModel QuitarCobranca(Guid id)
+        {
+            return new RetornoViewModel
+            {
+                Sucesso = false,
+                Mensagem = "Implementar metodo Quitar Cobranca!"
+            };
         }
 
         [HttpPost]
