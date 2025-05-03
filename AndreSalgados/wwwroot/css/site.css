@@ -702,6 +702,236 @@ body {
     display: none;
 }
 
+/* Estilos específicos para a tabela de cobranças */
+#cobrancasTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    #cobrancasTable th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-weight: 600;
+    }
+
+    #cobrancasTable td,
+    #cobrancasTable th {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+
+    #cobrancasTable tbody tr {
+        transition: all 0.2s ease;
+    }
+
+        #cobrancasTable tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+/* Estilos para os badges de status */
+.badge {
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+    }
+
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #212529;
+    }
+
+    .badge.bg-primary {
+        background-color: #0d6efd !important;
+    }
+
+    .badge.bg-success {
+        background-color: #198754 !important;
+    }
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .card-header .input-group {
+        width: 100% !important;
+        margin-top: 10px;
+    }
+
+    .card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #cobrancasTable thead {
+        display: none;
+    }
+
+    #cobrancasTable tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+
+    #cobrancasTable td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+
+        #cobrancasTable td:before {
+            content: attr(data-label);
+            font-weight: bold;
+            margin-right: 1rem;
+            flex: 1;
+            color: #6c757d;
+        }
+
+        #cobrancasTable td:last-child {
+            border-bottom: none;
+            justify-content: center;
+        }
+
+    /* Ajustes para os botões de ação em mobile */
+    #cobrancasTable .btn-group {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+        #cobrancasTable .btn-group .btn-sm {
+            margin: 0;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+}
+
+/* Esconde o filtro padrão do DataTables */
+#cobrancasTable_filter {
+    display: none;
+}
+
+/* Estilos específicos para a tabela de pedidos */
+#pedidosTable {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    #pedidosTable th {
+        background-color: #f8f9fa;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        font-weight: 600;
+    }
+
+    #pedidosTable td,
+    #pedidosTable th {
+        padding: 12px 15px;
+        vertical-align: middle;
+    }
+
+    #pedidosTable tbody tr {
+        transition: all 0.2s ease;
+    }
+
+        #pedidosTable tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+/* Estilos para os badges de status */
+.badge {
+    font-size: 0.85em;
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+}
+
+    .badge.bg-success {
+        background-color: #198754 !important;
+    }
+
+    .badge.bg-warning {
+        background-color: #ffc107 !important;
+        color: #212529;
+    }
+
+/* Ajustes para mobile */
+@media (max-width: 768px) {
+    .card-header .input-group {
+        width: 100% !important;
+        margin-top: 10px;
+    }
+
+    .card-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #pedidosTable thead {
+        display: none;
+    }
+
+    #pedidosTable tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+
+    #pedidosTable td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        padding: 0.75rem;
+    }
+
+        #pedidosTable td:before {
+            content: attr(data-label);
+            font-weight: bold;
+            margin-right: 1rem;
+            flex: 1;
+            color: #6c757d;
+        }
+
+        #pedidosTable td:last-child {
+            border-bottom: none;
+            justify-content: center;
+        }
+
+    /* Ajustes para os botões de ação em mobile */
+    #pedidosTable .btn-group {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.25rem;
+    }
+
+        #pedidosTable .btn-group .btn-sm {
+            margin: 0;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+        }
+}
+
+/* Esconde o filtro padrão do DataTables */
+#pedidosTable_filter {
+    display: none;
+}
+
 /* Loading Overlay Styles */
 .loading-overlay {
     position: fixed;
