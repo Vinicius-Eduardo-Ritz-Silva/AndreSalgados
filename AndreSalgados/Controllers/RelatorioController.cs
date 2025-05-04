@@ -17,5 +17,13 @@ namespace AndreSalgados.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public async Task<object> ProdutosMaisPedidos()
+        {
+            var retorno = await _relatorioVendaRepository.ProdutosMaisPedidos();
+
+            return retorno;
+        }
     }
 }
