@@ -1,4 +1,4 @@
-﻿@using Application.Core.Entities;
+@using Application.Core.Entities;
 @model IEnumerable<Cliente>
 
 @{
@@ -214,6 +214,7 @@
                 },
                 "drawCallback": function(settings) {
                     formataNumeroTelefone();
+                    adaptTableForMobile();
                 },
                 "initComplete": function(settings, json) {
                     formataNumeroTelefone();
@@ -245,10 +246,6 @@
             }
 
             $('#searchButton').click(function () {
-                searchTable();
-            });
-
-            $('#searchInput').keyup(function () {
                 searchTable();
             });
 

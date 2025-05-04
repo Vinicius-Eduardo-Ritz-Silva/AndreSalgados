@@ -119,6 +119,16 @@
         }
 
         $(document).ready(function () {
+            function adaptTableForMobile() {
+                if ($(window).width() < 576) {
+                    $('#pedidosTable td').each(function() {
+                        var cellIndex = $(this).index() + 1;
+                        var headerText = $('#pedidosTable th').eq(cellIndex - 1).text();
+                        $(this).attr('data-label', headerText);
+                    });
+                }
+            }
+
             var table = $('#pedidosTable').DataTable({
                 "pageLength": 10,
                 "lengthMenu": [10, 25, 50, 100],
@@ -136,6 +146,9 @@
                         "next": "<i class='fas fa-chevron-right'></i>",
                         "previous": "<i class='fas fa-chevron-left'></i>"
                     }
+                },
+                "drawCallback": function() {
+                    adaptTableForMobile();
                 }
             });
 
@@ -150,17 +163,6 @@
             $('#searchInput').keyup(function() {
                 table.search($(this).val()).draw();
             });
-
-            // Adapta a tabela para mobile
-            function adaptTableForMobile() {
-                if ($(window).width() < 576) {
-                    $('#pedidosTable td').each(function() {
-                        var cellIndex = $(this).index() + 1;
-                        var headerText = $('#pedidosTable th').eq(cellIndex - 1).text();
-                        $(this).attr('data-label', headerText);
-                    });
-                }
-            }
 
             // Executa na carga e no redimensionamento da tela
             $(window).on('load resize', function() {

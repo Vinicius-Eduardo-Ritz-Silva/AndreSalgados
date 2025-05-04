@@ -237,23 +237,30 @@
         }
 
         $(document).ready(function () {
+            function adaptTableForMobile() {
+                if ($(window).width() < 576) {
+                    $('#cobrancasTable td').each(function() {
+                        var cellIndex = $(this).index() + 1;
+                        var headerText = $('#cobrancasTable th').eq(cellIndex - 1).text();
+                        $(this).attr('data-label', headerText);
+                    });
+                }
+            }
+
             var table = $('#cobrancasTable').DataTable({
-                "pageLength": 10,
-                "lengthMenu": [10, 25, 50, 100],
-                "responsive": true,
-                "dom": '<"top"<"d-flex justify-content-between align-items-center"lf>>rt<"bottom"<"d-flex justify-content-between align-items-center"ip>><"clear">',
-                "language": {
-                    "lengthMenu": "Mostrar _MENU_ registros",
-                    "zeroRecords": "Nenhum registro encontrado",
-                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                    "infoEmpty": "Mostrando 0 a 0 de 0 registros",
-                    "infoFiltered": "(filtrado de _MAX_ registros totais)",
-                    "paginate": {
-                        "first": "Primeira",
-                        "last": "Última",
-                        "next": "<i class='fas fa-chevron-right'></i>",
-                        "previous": "<i class='fas fa-chevron-left'></i>"
-                    }
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json'
+                },
+                pageLength: 10,
+                lengthMenu: [[10, 25, 50, -1], [10, 25, 50, 'Todos']],
+                order: [[0, 'asc']],
+                responsive: true,
+                columnDefs: [{
+                    targets: 'no-sort',
+                    orderable: false
+                }],
+                drawCallback: function() {
+                    adaptTableForMobile();
                 }
             });
 
@@ -268,17 +275,6 @@
             $('#searchInput').keyup(function() {
                 table.search($(this).val()).draw();
             });
-
-            // Adapta a tabela para mobile
-            function adaptTableForMobile() {
-                if ($(window).width() < 576) {
-                    $('#cobrancasTable td').each(function() {
-                        var cellIndex = $(this).index() + 1;
-                        var headerText = $('#cobrancasTable th').eq(cellIndex - 1).text();
-                        $(this).attr('data-label', headerText);
-                    });
-                }
-            }
 
             // Executa na carga e no redimensionamento da tela
             $(window).on('load resize', function() {

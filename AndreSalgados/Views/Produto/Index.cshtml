@@ -1,4 +1,4 @@
-﻿@using Application.Core.Entities;
+@using Application.Core.Entities;
 @model IEnumerable<Produto>
 
 @{
@@ -220,6 +220,7 @@
                     var info = this.api().page.info();
                     $('#totalProdutos').html('Total de <strong>' + info.recordsTotal + '</strong> produtos | Mostrando ' +
                                          info.start + ' a ' + info.end + ' de ' + info.recordsDisplay);
+                    adaptTableForMobile();
 
                 },
                 "initComplete": function() {
@@ -239,7 +240,7 @@
 
             function searchTable() {
                 var value = $('#searchInput').val().toLowerCase();
-                $('#clientesTable tbody tr').filter(function () {
+                $('#produtosTable tbody tr').filter(function () {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             }
