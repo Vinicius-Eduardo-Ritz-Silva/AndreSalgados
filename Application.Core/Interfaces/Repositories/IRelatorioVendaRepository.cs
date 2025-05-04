@@ -9,5 +9,6 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IRelatorioVendaRepository
     {
+        public Task<object> ProdutosMaisPedidos();
     }
 }

@@ -88,6 +88,36 @@ namespace Infraestructure.Repositories
             }
         }
 
+        public bool QuitarCobranca(Guid id)
+        {
+            try
+            {
+                var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
+
+                cobranca.Valor = 0;
+                cobranca.DataCobranca = null;
+
+                var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == false).ToList();
+
+                foreach (var pedido in pedidos)
+                {
+                    pedido.Pago = true;
+
+                    _context.Update(pedido);
+                }
+
+                _context.Update(cobranca);
+
+                _context.SaveChanges();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public bool MarcarComoPerdida(Guid id)
         {
             try

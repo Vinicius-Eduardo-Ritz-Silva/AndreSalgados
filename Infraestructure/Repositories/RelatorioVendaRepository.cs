@@ -17,7 +17,24 @@ namespace Infraestructure.Repositories
         {
             _context = context;
         }
+        public async Task<object> ProdutosMaisPedidos()
+        {
+            try
+            {
+                var query = $@"";
 
-        //Metodos aqui
+                return new
+                {
+                    Sucesso = true
+                };
+            }
+            catch (Exception)
+            {
+                return new
+                {
+                    Sucesso = false
+                };
+            }
+        }
     }
 }

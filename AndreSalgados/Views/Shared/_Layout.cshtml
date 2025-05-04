@@ -21,6 +21,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+    <!-- Paginação -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
@@ -30,7 +33,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-home me-2"></i>AndreSalgados
+                <i class="fas fa-home me-2"></i>Andre Salgados
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
@@ -64,8 +67,13 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" asp-controller="Relatorio" asp-action="Index">
+                            <i class="fas fa-pie-chart me-1"></i> Relatórios
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" asp-controller="Home" asp-action="Privacy">
-                            <i class="fas fa-shield-alt me-1"></i> Privacy
+                            <i class="fas fa-mobile-alt me-1"></i> Notas
                         </a>
                     </li>
                 </ul>
@@ -76,6 +84,14 @@
     <!-- Conteúdo Principal -->
     <main class="flex-grow-1">
         <div class="container py-4">
+            <div id="loadingOverlay" class="loading-overlay">
+                <div class="loading-spinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                    <p class="loading-text mt-3">Carregando...</p>
+                </div>
+            </div>
             @RenderBody()
         </div>
     </main>
@@ -85,11 +101,11 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 text-center text-md-start">
-                    &copy; 2025 - AndreSalgados
+                    &copy; 2025 - Andre Salgados
                 </div>
                 <div class="col-md-6 text-center text-md-end">
                     <a href="/Home/Privacy" class="text-white text-decoration-none">
-                        <i class="fas fa-shield-alt me-1"></i> Privacy Policy
+                        <i class="fas fa-mobile-alt me-1"></i> Notas Genro
                     </a>
                 </div>
             </div>

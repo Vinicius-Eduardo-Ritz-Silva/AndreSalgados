@@ -13,6 +13,50 @@
     var clientes = ViewBag.Clientes as IEnumerable<Cliente>;
 }
 
+@section Styles {
+    <style>
+        @@media (max-width: 991.98px) {
+            .pedido-product-card {
+                border: 1px solid #dee2e6;
+                border-radius: 0.25rem;
+                margin-bottom: 1rem;
+                padding: 1rem;
+                background-color: #f8f9fa;
+            }
+    
+            .pedido-product-card .card-title {
+                font-size: 1.1rem;
+                margin-bottom: 1rem;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 0.5rem;
+            }
+    
+            .pedido-product-card .form-group {
+                margin-bottom: 0.75rem;
+            }
+    
+            .pedido-product-card label {
+                font-weight: 500;
+                font-size: 0.85rem;
+                margin-bottom: 0.25rem;
+                display: block;
+            }
+    
+            .pedido-product-card .form-control-plaintext {
+                font-weight: 600;
+            }
+    
+            .pedido-product-card .btn {
+                width: 100%;
+            }
+        }
+
+        .quantidade {
+            max-width: 100px;
+        }
+</style>
+}
+
 
     <!-- Botão de menu para mobile (aparece apenas em telas pequenas) -->
     <button class="btn btn-primary rounded-circle mobile-menu-btn" id="mobileMenuBtn">
@@ -88,20 +132,22 @@
             </div>
         </div>
 
-            <!-- Seção de Produtos -->
-            <div class="card mb-4">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Produtos do Pedido</h5>
-                    <div>
-                        <span class="badge bg-primary me-2">
+        <!-- Seção de Produtos -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Produtos do Pedido</h5>
+                <div>
+                    <span class="badge bg-primary me-2">
                         Quantidade Total: <span id="totalQuantidade">@Model.Quantidade</span>
-                        </span>
-                        <span class="badge bg-success">
-                            Valor Total: <span id="totalValor">@Model.Valor.ToString("C")</span>
-                        </span>
-                    </div>
+                    </span>
+                    <span class="badge bg-success">
+                        Valor Total: <span id="totalValor">@Model.Valor.ToString("C")</span>
+                    </span>
                 </div>
-                <div class="card-body">
+            </div>
+            <div class="card-body">
+                <!-- Tabela para desktop -->
+                <div class="d-none d-lg-block">
                     <div class="table-responsive">
                         <table class="pedido-product-table table table-striped">
                             <thead>
@@ -140,14 +186,61 @@
                         </table>
                     </div>
                 </div>
+
+                <!-- Cards para mobile -->
+                <div class="d-lg-none">
+                    <div class="row" id="produtosPedidoCards">
+                        @foreach (var item in produtosPedido)
+                        {
+                            <div class="col-12 mb-3" data-produto-id="@item.ProdutoId">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">@item.Produto.Descricao1</h5>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>Quantidade</label>
+                                                    <input type="number" value="@item.Quantidade"
+                                                           class="form-control quantidade"
+                                                           min="1"
+                                                           onchange="atualizarQuantidade('@item.Id', this.value)"
+                                                           oninput="validaQuantidade(this)">
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>Valor Unitário</label>
+                                                    <p class="form-control-plaintext">@item.Valor.ToString("C")</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="form-group">
+                                                    <label>Subtotal</label>
+                                                    <p class="form-control-plaintext">@item.SubTotal.ToString("C")</p>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 d-flex align-items-end justify-content-end">
+                                                <button class="btn btn-sm btn-danger"
+                                                        onclick="removerProduto('@item.Id')">
+                                                    <i class="fas fa-trash-alt"></i> Remover
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
 
 @section Scripts {
     <script>
-                // Função unificada para salvar/editar
+        // Função unificada para salvar/editar
         function salvarOuEditarPedido() {
             const pedidoId = '@pedidoId';
             const clienteId = $('#clienteSelect').val();
@@ -267,16 +360,13 @@
             }
 
             $.post('/Pedido/AtualizarQuantidadeProdutoPedido', {
-                    Id: Id,
-                    Quantidade: quantidade
+                Id: Id,
+                Quantidade: quantidade
             }, function(response) {
                 if (!response.sucesso) {
                     Swal.fire('Erro', response.mensagem, 'error');
-                    location.reload();
                 }
-                else {
-                    location.reload();
-                }
+                location.reload(); // Recarrega para atualizar ambos (tabela e cards)
             });
         }
 
@@ -294,12 +384,10 @@
                     $.ajax({
                         url: '/Pedido/RemoverProdutoPedido',
                         type: 'POST',
-                        data: {
-                            Id: Id
-                        },
+                        data: { Id: Id },
                         success: function(response) {
                             if (response.sucesso) {
-                                location.reload();
+                                location.reload(); // Recarrega para atualizar ambos
                             } else {
                                 Swal.fire('Erro', response.mensagem, 'error');
                             }

@@ -61,6 +61,15 @@ namespace AndreSalgados.Controllers
                 cliente.Inclusao = DateTime.Now;
                 cliente.Ativo = true;
 
+                var retornoValidar = await _clienteRepository.ValidarNumero(cliente.Numero);
+
+                if (!retornoValidar.Sucesso)
+                    return new RetornoViewModel
+                    {
+                        Sucesso = retornoValidar.Sucesso,
+                        Mensagem = retornoValidar.Mensagem
+                    };
+
                 var retorno = await _clienteRepository.InsertOrReplace(cliente);
 
                 return new RetornoViewModel

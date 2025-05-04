@@ -48,22 +48,10 @@ namespace AndreSalgados.Controllers
             {
                 ViewBag.ProdutosPedido = new List<ProdutoPedido>();
 
-                var sessionPedidoId = HttpContext.Session.GetString("NovoPedidoId");
+                var novoPedido = new Pedido { Id = Guid.Empty };
 
-                if (!string.IsNullOrEmpty(sessionPedidoId))
-                {
-                    var novoPedido = new Pedido { Id = Guid.Parse(sessionPedidoId) };
-
-                    return View(novoPedido);
-                }
-                else
-                {
-                    var novoPedido = new Pedido();
-
-                    HttpContext.Session.SetString("NovoPedidoId", novoPedido.Id.ToString());
-
-                    return View(novoPedido);
-                }
+                return View(novoPedido);
+                
             }
             else
             {
