@@ -1,4 +1,5 @@
-﻿using Application.Core.Interfaces.Repositories;
+﻿using Application.Core.DTOs;
+using Application.Core.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AndreSalgados.Controllers
@@ -19,7 +20,7 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpGet]
-        public async Task<object> ProdutosMaisPedidos()
+        public async Task<ProdutosMiasPedidosDTO> ProdutosMaisPedidos()
         {
             var retorno = await _relatorioVendaRepository.ProdutosMaisPedidos();
 
