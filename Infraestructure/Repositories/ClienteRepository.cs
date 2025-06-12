@@ -19,11 +19,12 @@ namespace Infraestructure.Repositories
         {
             _context = context;
         }
-        public async Task<ResultadoDTO> ValidarNumero(string numero)
+        public async Task<ResultadoDTO> ValidarNumero(Cliente cliente)
         {
             try
             {
-                var retorno = await _context.Clientes.AnyAsync(c => c.Numero == numero && c.Ativo);
+                var retorno = await _context.Clientes
+                    .AnyAsync(c => c.Numero == cliente.Numero && c.Ativo && c.Id != cliente.Id);
 
                 if (!retorno)
                     return new ResultadoDTO

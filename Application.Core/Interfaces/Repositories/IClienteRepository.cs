@@ -10,6 +10,6 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IClienteRepository : IMainRepository<Cliente>
     {
-        public Task<ResultadoDTO> ValidarNumero(string numero);
+        public Task<ResultadoDTO> ValidarNumero(Cliente cliente);
     }
 }
