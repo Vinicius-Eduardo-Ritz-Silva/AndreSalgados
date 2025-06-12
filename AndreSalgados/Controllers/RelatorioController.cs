@@ -20,7 +20,7 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpGet]
-        public async Task<ProdutosMiasPedidosDTO> ProdutosMaisPedidos()
+        public async Task<IEnumerable<ProdutosMiasPedidosDTO>> ProdutosMaisPedidos()
         {
             var retorno = await _relatorioVendaRepository.ProdutosMaisPedidos();
 
