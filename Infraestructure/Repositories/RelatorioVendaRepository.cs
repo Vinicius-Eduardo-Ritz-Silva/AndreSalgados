@@ -52,7 +52,7 @@ namespace Infraestructure.Repositories
 
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var retorno = connection.Query<ProdutosMiasPedidosDTO>(query).ToList();
+                    var retorno = await connection.QueryAsync<ProdutosMiasPedidosDTO>(query);
 
                     return retorno;
                 }
