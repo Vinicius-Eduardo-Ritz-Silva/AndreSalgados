@@ -5,17 +5,22 @@
 }
 
 <div class="chart-container" style="position: relative; height:400px; width:100%">
-	<canvas id="produtosChart"></canvas>
+	<canvas id="produtosMaisVendidosChart"></canvas>
+</div>
+
+<div class="chart-container" style="position: relative; height:400px; width:100%">
+    <canvas id="produtosMenosVendidosChart"></canvas>
 </div>
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
+        // Produtos Mais Vendidos
         document.addEventListener('DOMContentLoaded', function() {
             fetch('/Relatorio/ProdutosMaisPedidos')
                 .then(response => response.json())
                 .then(data => {
-                    const ctx = document.getElementById('produtosChart').getContext('2d');
+                    const ctx = document.getElementById('produtosMaisVendidosChart').getContext('2d');
                     new Chart(ctx, {
                         type: 'bar',
                         data: {
@@ -24,16 +29,60 @@
                                 label: 'Produtos Mais Vendidos',
                                 data: data.map(item => item.quantidade),
                                 backgroundColor: [
-                                    'rgba(255, 99, 132, 0.7)',
-                                    'rgba(54, 162, 235, 0.7)',
-                                    'rgba(255, 206, 86, 0.7)',
-                                    'rgba(75, 192, 192, 0.7)',
-                                    'rgba(153, 102, 255, 0.7)',
-                                    'rgba(255, 159, 64, 0.7)',
-                                    'rgba(199, 199, 199, 0.7)',
-                                    'rgba(83, 102, 255, 0.7)',
                                     'rgba(40, 159, 64, 0.7)',
-                                    'rgba(210, 99, 132, 0.7)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `${context.parsed.y} vendas`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'Quantidade Vendida'
+                                    }
+                                },
+                                x: {
+                                    title: {
+                                        display: true,
+                                        text: 'Produtos'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                });
+        });
+
+        // Produtos Menos Vendidos
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/Relatorio/ProdutosMenosPedidos')
+                .then(response => response.json())
+                .then(data => {
+                    const ctx = document.getElementById('produtosMenosVendidosChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: data.map(item => item.nome),
+                            datasets: [{
+                                label: 'Produtos Menos Vendidos',
+                                data: data.map(item => item.quantidade),
+                                backgroundColor: [
+                                    'rgba(159, 40, 64, 0.7)',
                                 ],
                                 borderWidth: 1
                             }]
