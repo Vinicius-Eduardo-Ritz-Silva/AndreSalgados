@@ -14,7 +14,7 @@ namespace Application.Core.Entities
         public decimal Valor { get; set; }
 
         [Column("FL_PEDIPAGO")]
-        public bool Pago { get; set; }
+        public PedidoStatus Pago { get; set; }
 
         [Column("FL_EDITPEDI")]
         public bool Edicao { get; set; }
@@ -34,6 +34,17 @@ namespace Application.Core.Entities
 
         [ForeignKey("CobrancaId")]
         public virtual Cobranca Cobranca { get; set; }
+
+        #endregion
+
+        #region -> Enum's
+
+        public enum PedidoStatus
+        {
+            Pendente = 0,
+            Pago = 1,
+            Perdido = 2
+        }
 
         #endregion
     }

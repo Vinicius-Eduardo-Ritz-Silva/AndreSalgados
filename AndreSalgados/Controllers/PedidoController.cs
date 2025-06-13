@@ -89,7 +89,7 @@ namespace AndreSalgados.Controllers
                 Alteracao = DateTime.Now,
                 Ativo = true,
                 ClienteId = ClienteId,
-                Pago = Pago,
+                Pago = Pago ? Pedido.PedidoStatus.Pago : Pedido.PedidoStatus.Pendente,
                 Edicao = Edicao
             };
 
@@ -255,7 +255,7 @@ namespace AndreSalgados.Controllers
 
         public RetornoViewModel ValidarPedidoPago(Pedido pedido)
         {
-            if (!pedido.Pago)
+            if (pedido.Pago == Pedido.PedidoStatus.Pendente)
             {
                 var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
 

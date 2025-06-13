@@ -68,7 +68,7 @@ namespace Infraestructure.Repositories
 
                     var pedidosCobrados = _context.Pedidos
                         .Where(p => p.ClienteId == cliente.Id
-                               && p.Pago == false && p.Ativo)
+                               && p.Pago == 0 && p.Ativo)
                         .AsNoTracking()
                         .ToList();
 
@@ -99,11 +99,11 @@ namespace Infraestructure.Repositories
                 cobranca.DataCobranca = null;
                 cobranca.Alteracao = DateTime.Now;
 
-                var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == false).ToList();
+                var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == 0).ToList();
 
                 foreach (var pedido in pedidos)
                 {
-                    pedido.Pago = true;
+                    pedido.Pago = Pedido.PedidoStatus.Pago;
 
                     _context.Update(pedido);
                 }

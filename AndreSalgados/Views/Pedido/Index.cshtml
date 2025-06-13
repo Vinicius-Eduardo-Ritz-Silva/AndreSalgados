@@ -47,13 +47,17 @@
                                 <td>@Html.DisplayFor(modelItem => item.Quantidade)</td>
                                 <td>@item.Valor.ToString("C")</td>
                                 <td>
-                                    @if (item.Pago)
+                                    @if (item.Pago == Pedido.PedidoStatus.Pago)
                                     {
                                         <span class="badge bg-success">Pago</span>
                                     }
-                                    else
+                                    else if (item.Pago == Pedido.PedidoStatus.Pendente)
                                     {
                                         <span class="badge bg-warning">Pendente</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Perdido</span>
                                     }
                                 </td>
                                 <td class="text-center">

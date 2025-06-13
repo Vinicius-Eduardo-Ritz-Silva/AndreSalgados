@@ -121,7 +121,7 @@
                         <div class="form-group">
                             <label>Status</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago == Pedido.PedidoStatus.Pago ? "checked" : "")>
                                 <label class="form-check-label" for="pagoCheckbox">
                                     Pedido Pago
                                 </label>
@@ -399,7 +399,9 @@
 
         // Controle do sidebar
         $(document).ready(function() {
-            if (@Json.Serialize(Model.Edicao)) {
+            var desabilita = @Json.Serialize(Model.Edicao || Model.Pago == Pedido.PedidoStatus.Perdido);
+
+            if (desabilita) {
                 $('#clienteSelect').prop('disabled', true);
                 $('#pagoCheckbox').prop('disabled', true);
             }
