@@ -19,9 +19,11 @@ namespace Infraestructure.Repositories
         private readonly VrContext _context;
         private readonly IConfiguration _configuration;
 
-        public RelatorioVendaRepository(VrContext context) 
+        public RelatorioVendaRepository(VrContext context,
+                                        IConfiguration configuration) 
         {
             _context = context;
+            _configuration = configuration;
         }
         public async Task<IEnumerable<ProdutosMiasPedidosDTO>> ProdutosMaisPedidos()
         {
