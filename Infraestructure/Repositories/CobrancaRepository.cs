@@ -129,7 +129,12 @@ namespace Infraestructure.Repositories
                 cobranca.CobrancaPerdida = true;
                 cobranca.Alteracao = DateTime.Now;
 
+                var cliente = _context.Clientes.FirstOrDefault(cl => cl.Id == cobranca.ClienteId);
+
+                cliente.Ativo = false;
+
                 _context.Update(cobranca);
+                _context.Update(cliente);
 
                 _context.SaveChanges();
 
