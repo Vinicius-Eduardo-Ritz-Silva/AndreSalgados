@@ -19,9 +19,11 @@ namespace Infraestructure.Repositories
         private readonly VrContext _context;
         private readonly IConfiguration _configuration;
 
-        public RelatorioVendaRepository(VrContext context) 
+        public RelatorioVendaRepository(VrContext context,
+                                        IConfiguration configuration) 
         {
             _context = context;
+            _configuration = configuration;
         }
 
         public async Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMaisPedidos()
@@ -51,7 +53,7 @@ namespace Infraestructure.Repositories
 
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var retorno = connection.Query<ProdutosPedidosDTO>(query).ToList();
+                    var retorno = await connection.QueryAsync<ProdutosPedidosDTO>(query);
 
                     return retorno;
                 }
@@ -89,7 +91,7 @@ namespace Infraestructure.Repositories
 
                 using (var connection = new SqlConnection(connectionString))
                 {
-                    var retorno = connection.Query<ProdutosPedidosDTO>(query).ToList();
+                    var retorno = await connection.QueryAsync<ProdutosPedidosDTO>(query);
 
                     return retorno;
                 }
