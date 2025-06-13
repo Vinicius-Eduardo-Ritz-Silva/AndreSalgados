@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Application.Core.DTOs
 {
-    public class ProdutosMiasPedidosDTO
+    public class ProdutosPedidosDTO
     {
         public string Nome { get; set; }
 

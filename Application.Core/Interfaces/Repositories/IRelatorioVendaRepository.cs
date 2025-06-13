@@ -10,6 +10,7 @@ namespace Application.Core.Interfaces.Repositories
 {
     public interface IRelatorioVendaRepository
     {
-        public Task<IEnumerable<ProdutosMiasPedidosDTO>> ProdutosMaisPedidos();
+        public Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMaisPedidos();
+        public Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMenosPedidos();
     }
 }
