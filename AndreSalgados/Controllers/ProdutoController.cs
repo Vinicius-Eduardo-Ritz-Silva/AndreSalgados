@@ -57,10 +57,6 @@ namespace AndreSalgados.Controllers
 
                 JsonConvert.PopulateObject(dados, produto);
 
-                produto.Alteracao = DateTime.Now;
-                produto.Inclusao = DateTime.Now;
-                produto.Ativo = true;
-
                 var retorno = await _produtoRepository.InsertOrReplace(produto);
 
                 return new RetornoViewModel

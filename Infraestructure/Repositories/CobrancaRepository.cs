@@ -26,6 +26,7 @@ namespace Infraestructure.Repositories
                 var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
 
                 cobranca.DataCobranca = dataCobranca;
+                cobranca.Alteracao = DateTime.Now;
 
                 _context.Update(cobranca);
 
@@ -96,6 +97,7 @@ namespace Infraestructure.Repositories
 
                 cobranca.Valor = 0;
                 cobranca.DataCobranca = null;
+                cobranca.Alteracao = DateTime.Now;
 
                 var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == false).ToList();
 
@@ -125,6 +127,7 @@ namespace Infraestructure.Repositories
                 var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
 
                 cobranca.CobrancaPerdida = true;
+                cobranca.Alteracao = DateTime.Now;
 
                 _context.Update(cobranca);
 

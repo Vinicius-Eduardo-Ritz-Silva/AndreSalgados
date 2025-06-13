@@ -57,10 +57,6 @@ namespace AndreSalgados.Controllers
 
                 JsonConvert.PopulateObject(dados, cliente);
 
-                cliente.Alteracao = DateTime.Now;
-                cliente.Inclusao = DateTime.Now;
-                cliente.Ativo = true;
-
                 var retornoValidar = await _clienteRepository.ValidarNumero(cliente);
 
                 if (!retornoValidar.Sucesso)
