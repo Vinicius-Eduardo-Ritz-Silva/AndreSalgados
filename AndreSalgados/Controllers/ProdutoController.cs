@@ -57,6 +57,17 @@ namespace AndreSalgados.Controllers
 
                 JsonConvert.PopulateObject(dados, produto);
 
+                var retornoValidar = await _produtoRepository.ValidarProduto(produto);
+
+                if (!retornoValidar.Sucesso) 
+                {
+                    return new RetornoViewModel
+                    {
+                        Sucesso = retornoValidar.Sucesso,
+                        Mensagem = retornoValidar.Mensagem
+                    };
+                }
+
                 var retorno = await _produtoRepository.InsertOrReplace(produto);
 
                 return new RetornoViewModel

@@ -145,6 +145,17 @@ namespace AndreSalgados.Controllers
                 };
             }
 
+            var retornoValidarQuantidade = _produtoPedidoRepository.ValidarQuantidadeProdutoPedido(Quantidade);
+
+            if (!retornoValidarQuantidade)
+            {
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "A quantidade deve ser maior que zero"
+                };
+            }
+
             var retornoAdicionarProduto = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
 
             if (!retornoAdicionarProduto.Sucesso)
@@ -169,7 +180,9 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade)
         {
-            if (Quantidade <= 0)
+            var retornoValidarQuantidade = _produtoPedidoRepository.ValidarQuantidadeProdutoPedido(Quantidade);
+
+            if (!retornoValidarQuantidade)
             {
                 return new RetornoViewModel
                 {

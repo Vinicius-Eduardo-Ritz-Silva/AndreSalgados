@@ -155,5 +155,20 @@ namespace Infraestructure.Repositories
                 return false;
             }
         }
+
+        public bool ValidarQuantidadeProdutoPedido(int quantidade)
+        {
+            try
+            {
+                if (quantidade < 1)
+                    return false;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

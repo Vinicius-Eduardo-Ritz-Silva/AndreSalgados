@@ -19,5 +19,7 @@ namespace Application.Core.Interfaces.Repositories
         public bool AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade);
 
         public bool ProdutoExisteNoPedido(Guid PedidoId, Guid ProdutoId);
+
+        public bool ValidarQuantidadeProdutoPedido(int quantidade);
     }
 }
