@@ -89,12 +89,16 @@
             <!-- Cabeçalho -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
+                <div class="btn-toolbar mb-2 mb-md-0" style="gap: 1em">
+                    <button class="btn btn-sm btn-primary" id="btnFecharReabrir" onclick="fecharOuReabrirPedido()">
+                        <i class="fas fa-save"></i> @(Model.Edicao ? "Fechar" : "Reabrir") Pedido
+                    </button>
                     <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()">
                         <i class="fas fa-save"></i> @(Model.Edicao ? "Editar" : "Salvar") Pedido
                     </button>
                 </div>
             </div>
+        </div>
 
         <!-- Seção de Informações do Pedido -->
         <div class="card mb-4">
@@ -236,6 +240,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
 @section Scripts {
@@ -272,6 +277,10 @@
                     Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
                 }
             });
+        }
+
+        function fecharOuReabrirPedido() {
+
         }
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)

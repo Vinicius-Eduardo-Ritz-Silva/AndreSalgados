@@ -93,6 +93,9 @@ namespace AndreSalgados.Controllers
                 Edicao = Edicao
             };
 
+            if (pedido.Pago == Pedido.PedidoStatus.Pago)
+                pedido.Status = Pedido.CobrancaStatus.PagoNaHora;
+
             var retornoSalvar = _pedidoRepository.SalvarPedido(pedido);
 
             if (!retornoSalvar)

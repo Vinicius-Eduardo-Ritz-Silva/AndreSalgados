@@ -16,6 +16,9 @@ namespace Application.Core.Entities
         [Column("FL_PEDIPAGO")]
         public PedidoStatus Pago { get; set; }
 
+        [Column("EN_STATCOBR")]
+        public CobrancaStatus? Status { get; set; }
+
         [Column("FL_EDITPEDI")]
         public bool Edicao { get; set; }
 
@@ -43,7 +46,16 @@ namespace Application.Core.Entities
         {
             Pendente = 0,
             Pago = 1,
-            Perdido = 2
+            Perdido = 2,
+            Fechado = 3
+        }
+
+        public enum CobrancaStatus
+        {
+            PagoNaHora = 0,
+            PagoEmDia = 1,
+            PagoComAtraso = 2,
+            NaoPago = 3
         }
 
         #endregion
