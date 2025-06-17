@@ -26,6 +26,11 @@ namespace Infraestructure.Repositories
             _configuration = configuration;
         }
 
+        public Task<IEnumerable<RelatorioVendaDTO>> FluxoFinanceiroMensal()
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMaisPedidos()
         {
             try

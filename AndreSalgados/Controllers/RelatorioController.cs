@@ -34,5 +34,13 @@ namespace AndreSalgados.Controllers
 
             return retorno;
         }
+
+        [HttpGet]
+        public async Task<IEnumerable<RelatorioVendaDTO>> FluxoFinanceiroMensal()
+        {
+            var retorno = await _relatorioVendaRepository.FluxoFinanceiroMensal();
+
+            return retorno;
+        }
     }
 }

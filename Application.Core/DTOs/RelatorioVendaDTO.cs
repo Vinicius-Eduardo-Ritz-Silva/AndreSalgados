@@ -9,12 +9,14 @@ namespace Application.Core.DTOs
 {
     public class RelatorioVendaDTO
     {
-        public decimal Valor { get; set; }
+        public decimal PagoNaHora { get; set; }
 
-        public bool VendaGanha { get; set; }
+        public decimal PagoEmDia { get; set; }
+
+        public decimal PagoComAtraso { get; set; }
+
+        public decimal NaoPago { get; set; }
 
         public DateTime Data { get; set; }
-
-        public string NomeCliente { get; set; }
     }
 }

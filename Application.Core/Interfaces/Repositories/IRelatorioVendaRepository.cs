@@ -12,5 +12,6 @@ namespace Application.Core.Interfaces.Repositories
     {
         public Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMaisPedidos();
         public Task<IEnumerable<ProdutosPedidosDTO>> ProdutosMenosPedidos();
+        public Task<IEnumerable<RelatorioVendaDTO>> FluxoFinanceiroMensal();
     }
 }
