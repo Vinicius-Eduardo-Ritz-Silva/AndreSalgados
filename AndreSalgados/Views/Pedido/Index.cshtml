@@ -47,7 +47,7 @@
                                 <td>@Html.DisplayFor(modelItem => item.Quantidade)</td>
                                 <td>@item.Valor.ToString("C")</td>
                                 <td>
-                                    @if (item.Pago == Pedido.PedidoStatus.Pago)
+                                    @if (item.Pago == Pedido.PedidoStatus.Pago || item.Pago == Pedido.PedidoStatus.Fechado)
                                     {
                                         <span class="badge bg-success">Pago</span>
                                     }

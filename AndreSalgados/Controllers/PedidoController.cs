@@ -124,6 +124,28 @@ namespace AndreSalgados.Controllers
         }
 
         [HttpPost]
+        public async Task<RetornoViewModel> FecharPedido(Guid Id)
+        {
+            var pedido = await _pedidoRepository.GetById(Id);
+
+            pedido.Pago = Pedido.PedidoStatus.Fechado;
+
+            var retorno = await _pedidoRepository.InsertOrReplace(pedido);
+
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = retorno
+                    ? "Pedido finalizado com sucesso!"
+                    : "Erro ao finalizar pedido!",
+                Dados = new
+                {
+                    pedidoId = pedido.Id
+                }
+            };
+        }
+
+        [HttpPost]
         public async Task<RetornoViewModel> AdicionarProdutoPedido(Guid Id, Guid ProdutoId, int Quantidade)
         {
             var pedido = await _pedidoRepository.GetById(Id);

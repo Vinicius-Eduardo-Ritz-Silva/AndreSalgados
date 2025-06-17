@@ -90,10 +90,12 @@
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
                 <div class="btn-toolbar mb-2 mb-md-0" style="gap: 1em">
-                    <button class="btn btn-sm btn-primary" id="btnFecharReabrir" onclick="fecharOuReabrirPedido()">
-                        <i class="fas fa-save"></i> @(Model.Edicao ? "Fechar" : "Reabrir") Pedido
+                    <button class="btn btn-sm btn-primary" id="btnFecharReabrir" onclick="fecharOuReabrirPedido()"
+                            @(Model.Pago != Pedido.PedidoStatus.Pago || Model.Quantidade == 0 || !Model.Edicao ? "disabled" : "")>
+                        <i class="fas fa-check"></i> @(Model.Pago == Pedido.PedidoStatus.Fechado ? "Pedido Fechado" : "Fechar Pedido")
                     </button>
-                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()">
+                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()"
+                            @(Model.Pago == Pedido.PedidoStatus.Fechado ? "disabled" : "")>
                         <i class="fas fa-save"></i> @(Model.Edicao ? "Editar" : "Salvar") Pedido
                     </button>
                 </div>
@@ -174,13 +176,17 @@
                                                    style="width: 80px;"
                                                    min="1"
                                                    onchange="atualizarQuantidade('@item.Id', this.value)"
-                                                   oninput="validaQuantidade(this)">
+                                                   oninput="validaQuantidade(this)"
+                                                   @(Model.Pago == Pedido.PedidoStatus.Fechado 
+                                                   || Model.Pago == Pedido.PedidoStatus.Perdido? "disabled" : "")>
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@(item.SubTotal.ToString("C"))</td>
                                         <td>
                                             <button class="btn btn-sm btn-danger"
-                                                    onclick="removerProduto('@item.Id')">
+                                                    onclick="removerProduto('@item.Id')"
+                                                    @(Model.Pago == Pedido.PedidoStatus.Fechado 
+                                                    || Model.Pago == Pedido.PedidoStatus.Perdido ? "disabled" : "")>
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -280,7 +286,37 @@
         }
 
         function fecharOuReabrirPedido() {
+            const pedidoId = '@pedidoId';
 
+            Swal.fire({
+                title: 'Aviso!',
+                text: "Ao fechar este pedido não será possível reabri-lo",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Fechar Pedido!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Pedido/FecharPedido',
+                        type: 'POST',
+                        data: {
+                            Id: pedidoId
+                        },
+                        success: function(response) {
+                            if (response.sucesso) {
+                                window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
+                            } else {
+                                Swal.fire('Erro', response.Mensagem, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+                        }
+                    });
+                }
+            });
         }
 
         // Funções para adicionar/atualizar/remover produtos (manter as anteriores)

@@ -95,18 +95,20 @@ namespace Infraestructure.Repositories
             {
                 var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
 
-                cobranca.Valor = 0;
-                cobranca.DataCobranca = null;
-                cobranca.Alteracao = DateTime.Now;
-
                 var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == 0).ToList();
 
                 foreach (var pedido in pedidos)
                 {
                     pedido.Pago = Pedido.PedidoStatus.Pago;
+                    pedido.Status = cobranca.DataCobranca >= DateTime.Now || cobranca.DataCobranca == null 
+                        ? Pedido.CobrancaStatus.PagoEmDia : Pedido.CobrancaStatus.PagoComAtraso;
 
                     _context.Update(pedido);
                 }
+
+                cobranca.Valor = 0;
+                cobranca.DataCobranca = null;
+                cobranca.Alteracao = DateTime.Now;
 
                 _context.Update(cobranca);
 
@@ -125,6 +127,17 @@ namespace Infraestructure.Repositories
             try
             {
                 var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
+
+                var pedidos = _context.Pedidos.Where(p => p.ClienteId == cobranca.ClienteId && p.Pago == 0).ToList();
+
+                foreach (var pedido in pedidos)
+                {
+                    pedido.Pago = Pedido.PedidoStatus.Perdido;
+                    pedido.Status = Pedido.CobrancaStatus.NaoPago;
+                    pedido.Ativo = false;
+
+                    _context.Update(pedido);
+                }
 
                 cobranca.CobrancaPerdida = true;
                 cobranca.Alteracao = DateTime.Now;
