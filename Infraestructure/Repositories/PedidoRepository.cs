@@ -73,13 +73,20 @@ namespace Infraestructure.Repositories
 
                 if (pedidoExistente == null)
                 {
+                    var codigoExterno = _context.Pedidos.AsNoTracking().Count();
+
+                    pedido.CodigoExterno = codigoExterno + 1;
+
                     _context.Add(pedido);
                 }
                 else
                 {
                     pedido.Inclusao = pedidoExistente.Inclusao;
+                    pedido.Alteracao = DateTime.Now;
+                    pedido.Ativo = pedidoExistente.Ativo;
                     pedido.Valor = pedidoExistente.Valor;
                     pedido.Quantidade = pedidoExistente.Quantidade;
+                    pedido.CodigoExterno = pedidoExistente.CodigoExterno;
 
                     _context.Update(pedido);
                 }
