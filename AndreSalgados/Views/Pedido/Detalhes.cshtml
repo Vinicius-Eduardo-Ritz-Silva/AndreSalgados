@@ -54,6 +54,19 @@
         .quantidade {
             max-width: 100px;
         }
+
+        #produtoSearchInput {
+            border-right: 0;
+        }
+
+        #produtoSearchButton {
+            border-left: 0;
+            background-color: #fff;
+        }
+
+        .produto-item {
+            transition: all 0.3s ease;
+        }
 </style>
 }
 
@@ -71,10 +84,21 @@
             <i class="fas fa-chevron-right" id="sidebarToggleIcon"></i>
         </div>
         <div class="p-3">
+
+        <div class="input-group mb-3">
+            <input type="text" id="produtoSearchInput" class="form-control" placeholder="Pesquisar produto..."
+                   aria-label="Pesquisar produto" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="produtoSearchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
             <ul class="nav flex-column">
                 @foreach (var produto in produtosDisponiveis)
                 {
-                    <li class="nav-item">
+                    <li class="nav-item produto-item">
                         <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')"
                             @(Model.Pago == Pedido.PedidoStatus.Perdido
                                 || Model.Pago == Pedido.PedidoStatus.Fechado ? "disabled" : "")>
@@ -443,6 +467,19 @@
             });
         }
 
+        function filtrarProdutos() {
+            const searchTerm = $('#produtoSearchInput').val().toLowerCase();
+    
+            $('.produto-item').each(function() {
+                const produtoText = $(this).text().toLowerCase();
+                if (produtoText.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
         // Controle do sidebar
         $(document).ready(function() {
             var desabilita = @Json.Serialize(Model.Edicao || Model.Pago == Pedido.PedidoStatus.Perdido);
@@ -485,6 +522,16 @@
             if (window.innerWidth >= 992) {
                 $('#pedidoSidebar').addClass('active');
             }
+
+            // Eventos para a pesquisa
+            $('#produtoSearchInput').on('keyup', filtrarProdutos);
+            $('#produtoSearchButton').on('click', filtrarProdutos);
+    
+            // Limpar pesquisa quando o sidebar é fechado/aberto
+            $('#sidebarHeader, #mobileMenuBtn').click(function() {
+                $('#produtoSearchInput').val('');
+                filtrarProdutos();
+            });
         });
 
         // Ajuste no redimensionamento
