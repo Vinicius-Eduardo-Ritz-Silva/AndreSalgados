@@ -75,7 +75,9 @@
                 @foreach (var produto in produtosDisponiveis)
                 {
                     <li class="nav-item">
-                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')">
+                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')"
+                            @(Model.Pago == Pedido.PedidoStatus.Perdido
+                                || Model.Pago == Pedido.PedidoStatus.Fechado ? "disabled" : "")>
                             @produto.Descricao1
                         </button>
                     </li>
