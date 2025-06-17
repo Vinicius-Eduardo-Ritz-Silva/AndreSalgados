@@ -6,7 +6,7 @@
         ? (Guid)TempData["NovoPedidoId"]
         : Model.Id;
 
-    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido #{pedidoId.ToString().Substring(0, 8)}";
+    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido {Model.CodigoExterno.ToString()}";
 
     var produtosPedido = ViewBag.ProdutosPedido as IEnumerable<ProdutoPedido> ?? new List<ProdutoPedido>();
     var produtosDisponiveis = ViewBag.ProdutosDisponiveis as IEnumerable<Produto>;
@@ -114,7 +114,7 @@
         <div class="container-fluid">
             <!-- Cabeçalho -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
+                <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido {Model.CodigoExterno.ToString()}")</h1>
                 <div class="btn-toolbar mb-2 mb-md-0" style="gap: 1em">
                     <button class="btn btn-sm btn-primary" id="btnFecharReabrir" onclick="fecharOuReabrirPedido()"
                             @(Model.Pago != Pedido.PedidoStatus.Pago || Model.Quantidade == 0 || !Model.Edicao ? "disabled" : "")>

@@ -32,6 +32,7 @@
                 <table id="pedidosTable" class="table table-striped table-hover table-bordered">
                     <thead class="table-light">
                         <tr>
+                            <th>Pedido</th>
                             <th>Cliente</th>
                             <th>Quantidade Total</th>
                             <th>Valor Total</th>
@@ -43,6 +44,7 @@
                         @foreach (var item in Model)
                         {
                             <tr>
+                                <td>@Html.DisplayFor(modelItem => item.CodigoExterno)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Cliente.Nome)</td>
                                 <td>@Html.DisplayFor(modelItem => item.Quantidade)</td>
                                 <td>@item.Valor.ToString("C")</td>

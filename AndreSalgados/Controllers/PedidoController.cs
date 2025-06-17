@@ -68,7 +68,7 @@ namespace AndreSalgados.Controllers
         {
             var pedido = await _pedidoRepository.GetWithInclude(p => p.Cliente);
 
-            return pedido.OrderBy(p => p.Cliente.Nome);
+            return pedido.OrderBy(p => p.CodigoExterno);
         }
 
         [HttpGet]
