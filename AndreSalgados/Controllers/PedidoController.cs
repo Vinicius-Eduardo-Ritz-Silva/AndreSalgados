@@ -68,7 +68,7 @@ namespace AndreSalgados.Controllers
         {
             var pedido = await _pedidoRepository.GetWithInclude(p => p.Cliente);
 
-            return pedido.OrderBy(p => p.Cliente.Nome);
+            return pedido.OrderBy(p => p.CodigoExterno);
         }
 
         [HttpGet]
@@ -89,9 +89,12 @@ namespace AndreSalgados.Controllers
                 Alteracao = DateTime.Now,
                 Ativo = true,
                 ClienteId = ClienteId,
-                Pago = Pago,
+                Pago = Pago ? Pedido.PedidoStatus.Pago : Pedido.PedidoStatus.Pendente,
                 Edicao = Edicao
             };
+
+            if (pedido.Pago == Pedido.PedidoStatus.Pago)
+                pedido.Status = Pedido.CobrancaStatus.PagoNaHora;
 
             var retornoSalvar = _pedidoRepository.SalvarPedido(pedido);
 
@@ -113,6 +116,28 @@ namespace AndreSalgados.Controllers
                 Mensagem = pedido.Edicao
                     ? "Pedido em edição!"
                     : "Pedido salvo com sucesso!",
+                Dados = new
+                {
+                    pedidoId = pedido.Id
+                }
+            };
+        }
+
+        [HttpPost]
+        public async Task<RetornoViewModel> FecharPedido(Guid Id)
+        {
+            var pedido = await _pedidoRepository.GetById(Id);
+
+            pedido.Pago = Pedido.PedidoStatus.Fechado;
+
+            var retorno = await _pedidoRepository.InsertOrReplace(pedido);
+
+            return new RetornoViewModel
+            {
+                Sucesso = true,
+                Mensagem = retorno
+                    ? "Pedido finalizado com sucesso!"
+                    : "Erro ao finalizar pedido!",
                 Dados = new
                 {
                     pedidoId = pedido.Id
@@ -145,6 +170,17 @@ namespace AndreSalgados.Controllers
                 };
             }
 
+            var retornoValidarQuantidade = _produtoPedidoRepository.ValidarQuantidadeProdutoPedido(Quantidade);
+
+            if (!retornoValidarQuantidade)
+            {
+                return new RetornoViewModel
+                {
+                    Sucesso = false,
+                    Mensagem = "A quantidade deve ser maior que zero"
+                };
+            }
+
             var retornoAdicionarProduto = _produtoPedidoRepository.AdicionarProdutoPedido(Id, ProdutoId, Quantidade);
 
             if (!retornoAdicionarProduto.Sucesso)
@@ -169,7 +205,9 @@ namespace AndreSalgados.Controllers
         [HttpPost]
         public RetornoViewModel AtualizarQuantidadeProdutoPedido(Guid Id, int Quantidade)
         {
-            if (Quantidade <= 0)
+            var retornoValidarQuantidade = _produtoPedidoRepository.ValidarQuantidadeProdutoPedido(Quantidade);
+
+            if (!retornoValidarQuantidade)
             {
                 return new RetornoViewModel
                 {
@@ -255,7 +293,7 @@ namespace AndreSalgados.Controllers
 
         public RetornoViewModel ValidarPedidoPago(Pedido pedido)
         {
-            if (!pedido.Pago)
+            if (pedido.Pago == Pedido.PedidoStatus.Pendente)
             {
                 var retornoValidar = _cobrancaRepository.GerarCobranca(pedido);
 

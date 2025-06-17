@@ -85,11 +85,17 @@ namespace Infraestructure.Repositories
                 if (oldEntity != null)
                 {
                     Entity.Inclusao = oldEntity.Inclusao;
+                    Entity.Alteracao = DateTime.Now;
+                    Entity.Ativo = oldEntity.Ativo;
 
                     _dbSet.Update(Entity);
                 }
                 else
                 {
+                    Entity.Inclusao = DateTime.Now;
+                    Entity.Alteracao = DateTime.Now;
+                    Entity.Ativo = true;
+
                     await _dbSet.AddAsync(Entity);
                 }
 

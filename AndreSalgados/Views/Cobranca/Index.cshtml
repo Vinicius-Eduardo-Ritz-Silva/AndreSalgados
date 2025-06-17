@@ -78,15 +78,18 @@
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
                                         <button onclick="quitarCobranca('@item.Id')"
-                                                class="btn btn-sm btn-success" title="Quitar Cobrança">
+                                                class="btn btn-sm btn-success" title="Quitar Cobrança"
+                                        @(item.Valor == 0 || item.CobrancaPerdida ? "disabled" : "")>
                                             <i class="fas fa-check"></i>
                                         </button>
                                         <button onclick="mostrarCalendario('@item.Id')"
-                                                class="btn btn-sm btn-info" title="Setar Data Cobrança">
+                                                class="btn btn-sm btn-info" title="Setar Data Cobrança"
+                                                @(item.Valor == 0 || item.CobrancaPerdida ? "disabled" : "")>
                                             <i class="fas fa-calendar"></i>
                                         </button>
                                         <button onclick="marcarComoPerdida('@item.Id')"
-                                                class="btn btn-sm btn-danger" title="Cobrança Perdida">
+                                                class="btn btn-sm btn-danger" title="Cobrança Perdida"
+                                                @(item.Valor == 0 || item.CobrancaPerdida ? "disabled" : "")>
                                             <i class="fas fa-x"></i>
                                         </button>
                                     </div>

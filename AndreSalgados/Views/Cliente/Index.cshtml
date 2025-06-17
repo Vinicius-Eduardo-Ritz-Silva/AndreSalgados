@@ -47,6 +47,12 @@
                                 <td>@Html.DisplayFor(modelItem => item.Endereco)</td>
                                 <td class="text-center">
                                     <div class="btn-group" role="group">
+                                        <a href="@($"https://wa.me/55{new string(item.Numero.Where(char.IsDigit).ToArray())}")"
+                                           target="_blank"
+                                           class="btn btn-sm btn-success"
+                                           title="Conversar no WhatsApp">
+                                            <i class="fab fa-whatsapp"></i>
+                                        </a>
                                         <button onclick="detalhesCliente('@item.Id')"
                                                 class="btn btn-sm btn-info" title="Detalhes">
                                             <i class="fas fa-eye"></i>

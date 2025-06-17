@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Core.DTOs;
 using Application.Core.Entities;
 using Application.Core.Interfaces.Repositories;
 using Infraestructure.Data;
@@ -19,5 +20,37 @@ namespace Infraestructure.Repositories
             _context = context;
         }
 
+        public async Task<ResultadoDTO> ValidarProduto(Produto produto)
+        {
+            try
+            {
+                if (produto.Preco < 0)
+                    return new ResultadoDTO
+                    {
+                        Sucesso = false,
+                        Mensagem = "O preço deve ser maior que zero!"
+                    };
+
+                if (produto.Quantidade < 0)
+                    return new ResultadoDTO
+                    {
+                        Sucesso = false,
+                        Mensagem = "A quantidade deve ser maior que zero!"
+                    };
+
+                return new ResultadoDTO
+                {
+                    Sucesso = true
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultadoDTO
+                {
+                    Sucesso = false,
+                    Mensagem = "Erro ao validar o produto!"
+                };
+            }
+        }
     }
 }

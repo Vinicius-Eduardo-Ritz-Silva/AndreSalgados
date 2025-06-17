@@ -6,7 +6,7 @@
         ? (Guid)TempData["NovoPedidoId"]
         : Model.Id;
 
-    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido #{pedidoId.ToString().Substring(0, 8)}";
+    ViewData["Title"] = pedidoId == Guid.Empty ? "Novo Pedido" : $"Pedido {Model.CodigoExterno.ToString()}";
 
     var produtosPedido = ViewBag.ProdutosPedido as IEnumerable<ProdutoPedido> ?? new List<ProdutoPedido>();
     var produtosDisponiveis = ViewBag.ProdutosDisponiveis as IEnumerable<Produto>;
@@ -54,6 +54,19 @@
         .quantidade {
             max-width: 100px;
         }
+
+        #produtoSearchInput {
+            border-right: 0;
+        }
+
+        #produtoSearchButton {
+            border-left: 0;
+            background-color: #fff;
+        }
+
+        .produto-item {
+            transition: all 0.3s ease;
+        }
 </style>
 }
 
@@ -71,11 +84,24 @@
             <i class="fas fa-chevron-right" id="sidebarToggleIcon"></i>
         </div>
         <div class="p-3">
+
+        <div class="input-group mb-3">
+            <input type="text" id="produtoSearchInput" class="form-control" placeholder="Pesquisar produto..."
+                   aria-label="Pesquisar produto" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="produtoSearchButton">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+
             <ul class="nav flex-column">
                 @foreach (var produto in produtosDisponiveis)
                 {
-                    <li class="nav-item">
-                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')">
+                    <li class="nav-item produto-item">
+                        <button class="nav-link text-dark" onclick="adicionarProduto('@produto.Id')"
+                            @(Model.Pago == Pedido.PedidoStatus.Perdido
+                                || Model.Pago == Pedido.PedidoStatus.Fechado ? "disabled" : "")>
                             @produto.Descricao1
                         </button>
                     </li>
@@ -88,13 +114,19 @@
         <div class="container-fluid">
             <!-- Cabeçalho -->
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido #{Model.Id.ToString().Substring(0, 8)}")</h1>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()">
+                <h1 class="h2">@(Model.Id == Guid.Empty ? "Novo Pedido" : $"Pedido {Model.CodigoExterno.ToString()}")</h1>
+                <div class="btn-toolbar mb-2 mb-md-0" style="gap: 1em">
+                    <button class="btn btn-sm btn-primary" id="btnFecharReabrir" onclick="fecharOuReabrirPedido()"
+                            @(Model.Pago != Pedido.PedidoStatus.Pago || Model.Quantidade == 0 || !Model.Edicao ? "disabled" : "")>
+                        <i class="fas fa-check"></i> @(Model.Pago == Pedido.PedidoStatus.Fechado ? "Pedido Fechado" : "Fechar Pedido")
+                    </button>
+                    <button class="btn btn-sm btn-primary" id="btnSalvarEditar" onclick="salvarOuEditarPedido()"
+                            @(Model.Pago == Pedido.PedidoStatus.Fechado ? "disabled" : "")>
                         <i class="fas fa-save"></i> @(Model.Edicao ? "Editar" : "Salvar") Pedido
                     </button>
                 </div>
             </div>
+        </div>
 
         <!-- Seção de Informações do Pedido -->
         <div class="card mb-4">
@@ -121,7 +153,7 @@
                         <div class="form-group">
                             <label>Status</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago ? "checked" : "")>
+                                <input class="form-check-input" type="checkbox" id="pagoCheckbox" @(Model.Pago == Pedido.PedidoStatus.Pago ? "checked" : "")>
                                 <label class="form-check-label" for="pagoCheckbox">
                                     Pedido Pago
                                 </label>
@@ -170,13 +202,17 @@
                                                    style="width: 80px;"
                                                    min="1"
                                                    onchange="atualizarQuantidade('@item.Id', this.value)"
-                                                   oninput="validaQuantidade(this)">
+                                                   oninput="validaQuantidade(this)"
+                                                   @(Model.Pago == Pedido.PedidoStatus.Fechado 
+                                                   || Model.Pago == Pedido.PedidoStatus.Perdido? "disabled" : "")>
                                         </td>
                                         <td>@item.Valor.ToString("C")</td>
                                         <td>@(item.SubTotal.ToString("C"))</td>
                                         <td>
                                             <button class="btn btn-sm btn-danger"
-                                                    onclick="removerProduto('@item.Id')">
+                                                    onclick="removerProduto('@item.Id')"
+                                                    @(Model.Pago == Pedido.PedidoStatus.Fechado 
+                                                    || Model.Pago == Pedido.PedidoStatus.Perdido ? "disabled" : "")>
                                                 <i class="fas fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -236,6 +272,7 @@
                 </div>
             </div>
         </div>
+    </div>
 
 
 @section Scripts {
@@ -270,6 +307,40 @@
                 },
                 error: function() {
                     Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+                }
+            });
+        }
+
+        function fecharOuReabrirPedido() {
+            const pedidoId = '@pedidoId';
+
+            Swal.fire({
+                title: 'Aviso!',
+                text: "Ao fechar este pedido não será possível reabri-lo",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Fechar Pedido!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Pedido/FecharPedido',
+                        type: 'POST',
+                        data: {
+                            Id: pedidoId
+                        },
+                        success: function(response) {
+                            if (response.sucesso) {
+                                window.location.href = `/Pedido/Detalhes/${response.dados.pedidoId}`;
+                            } else {
+                                Swal.fire('Erro', response.Mensagem, 'error');
+                            }
+                        },
+                        error: function() {
+                            Swal.fire('Erro', 'Falha na comunicação com o servidor', 'error');
+                        }
+                    });
                 }
             });
         }
@@ -342,7 +413,6 @@
         }
 
         function validaQuantidade(input) {
-            debugger;
             if (input.value < 1) {
                 input.value = 1;
             }
@@ -397,9 +467,24 @@
             });
         }
 
+        function filtrarProdutos() {
+            const searchTerm = $('#produtoSearchInput').val().toLowerCase();
+    
+            $('.produto-item').each(function() {
+                const produtoText = $(this).text().toLowerCase();
+                if (produtoText.includes(searchTerm)) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        }
+
         // Controle do sidebar
         $(document).ready(function() {
-            if (@Json.Serialize(Model.Edicao)) {
+            var desabilita = @Json.Serialize(Model.Edicao || Model.Pago == Pedido.PedidoStatus.Perdido);
+
+            if (desabilita) {
                 $('#clienteSelect').prop('disabled', true);
                 $('#pagoCheckbox').prop('disabled', true);
             }
@@ -437,6 +522,16 @@
             if (window.innerWidth >= 992) {
                 $('#pedidoSidebar').addClass('active');
             }
+
+            // Eventos para a pesquisa
+            $('#produtoSearchInput').on('keyup', filtrarProdutos);
+            $('#produtoSearchButton').on('click', filtrarProdutos);
+    
+            // Limpar pesquisa quando o sidebar é fechado/aberto
+            $('#sidebarHeader, #mobileMenuBtn').click(function() {
+                $('#produtoSearchInput').val('');
+                filtrarProdutos();
+            });
         });
 
         // Ajuste no redimensionamento

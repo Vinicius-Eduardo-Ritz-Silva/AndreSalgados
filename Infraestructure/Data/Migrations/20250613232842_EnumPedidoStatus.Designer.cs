@@ -4,16 +4,19 @@ using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Infraestructure.Data
+namespace Infraestructure.Data.Migrations
 {
     [DbContext(typeof(VrContext))]
-    partial class VrContextModelSnapshot : ModelSnapshot
+    [Migration("20250613232842_EnumPedidoStatus")]
+    partial class EnumPedidoStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,10 +161,6 @@ namespace Infraestructure.Data
                     b.Property<int>("Quantidade")
                         .HasColumnType("int")
                         .HasColumnName("NR_QUANPEDI");
-
-                    b.Property<int?>("Status")
-                        .HasColumnType("int")
-                        .HasColumnName("EN_STATCOBR");
 
                     b.Property<decimal>("Valor")
                         .HasColumnType("decimal(18,2)")

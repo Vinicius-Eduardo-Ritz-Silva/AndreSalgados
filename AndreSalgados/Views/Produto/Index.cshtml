@@ -93,12 +93,14 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label for="Preco" class="form-label">Preco</label>
-                            <input type="number" class="form-control" id="Preco" name="Preco" required>
+                            <input type="number" min="0" class="form-control" id="Preco"
+                                   name="Preco" oninput="validaQuantidade(this)" required>
                             <div class="invalid-feedback">Por favor, informe o preco do produto.</div>
                         </div>
                         <div class="col-md-6">
                             <label for="Quantidade" class="form-label">Quantidade</label>
-                            <input type="number" class="form-control" id="Quantidade" name="Quantidade" required>
+                            <input type="number" min="0" class="form-control" id="Quantidade"
+                                   name="Quantidade" oninput="validaQuantidade(this)" required>
                             <div class="invalid-feedback">Por favor, informe a quantidade do produto.</div>
                         </div>
                     </div>  
@@ -188,6 +190,16 @@
                     });
                 }
             });
+        }
+
+        function validaQuantidade(input) {
+            if (input.value < 0) {
+                input.value = 0;
+            }
+
+            input.value = input.value.replace(/[^0-9]/g, '');
+
+            input.value = parseInt(input.value) || 0;
         }
 
         // Pesquisa na tabela
