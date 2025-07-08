@@ -30,7 +30,7 @@ function showLoadingDelayed(message = "Carregando...") {
 
     // Configurar novo timeout
     loadingTimeout = setTimeout(() => {
-        loadingStartTime = Date.now();
+        loadingStartTime = Date.UtcNow();
         $('.loading-text').text(message);
         $('#loadingOverlay').addClass('active');
     }, LOADING_DELAY);
@@ -42,7 +42,7 @@ function hideLoadingDelayed() {
 
     // Se o loading está visível
     if ($('#loadingOverlay').hasClass('active')) {
-        const elapsed = Date.now() - loadingStartTime;
+        const elapsed = Date.UtcNow() - loadingStartTime;
         const remaining = MIN_SHOW_TIME - elapsed;
 
         // Garantir que o loading seja mostrado pelo tempo mínimo

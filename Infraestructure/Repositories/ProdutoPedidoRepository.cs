@@ -26,8 +26,8 @@ namespace Infraestructure.Repositories
             {
                 var produtoPedido = new ProdutoPedido();
 
-                produtoPedido.Inclusao = DateTime.Now;
-                produtoPedido.Alteracao = DateTime.Now;
+                produtoPedido.Inclusao = DateTime.UtcNow;
+                produtoPedido.Alteracao = DateTime.UtcNow;
                 produtoPedido.Ativo = true;
                 produtoPedido.PedidoId = PedidoId;
                 produtoPedido.ProdutoId = ProdutoId;

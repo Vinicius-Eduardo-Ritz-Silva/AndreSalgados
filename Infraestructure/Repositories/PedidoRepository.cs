@@ -82,7 +82,7 @@ namespace Infraestructure.Repositories
                 else
                 {
                     pedido.Inclusao = pedidoExistente.Inclusao;
-                    pedido.Alteracao = DateTime.Now;
+                    pedido.Alteracao = DateTime.UtcNow;
                     pedido.Ativo = pedidoExistente.Ativo;
                     pedido.Valor = pedidoExistente.Valor;
                     pedido.Quantidade = pedidoExistente.Quantidade;

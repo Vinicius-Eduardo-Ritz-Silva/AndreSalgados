@@ -26,7 +26,7 @@ namespace Infraestructure.Repositories
                 var cobranca = _context.Cobrancaes.FirstOrDefault(co => co.Id == id);
 
                 cobranca.DataCobranca = dataCobranca;
-                cobranca.Alteracao = DateTime.Now;
+                cobranca.Alteracao = DateTime.UtcNow;
 
                 _context.Update(cobranca);
 
@@ -53,8 +53,8 @@ namespace Infraestructure.Repositories
 
                     cobrancaNova.ClienteId = cliente.Id;
                     cobrancaNova.Valor = pedido.Valor;
-                    cobrancaNova.Inclusao = DateTime.Now;
-                    cobrancaNova.Alteracao = DateTime.Now;
+                    cobrancaNova.Inclusao = DateTime.UtcNow;
+                    cobrancaNova.Alteracao = DateTime.UtcNow;
                     cobrancaNova.Ativo = true;
 
                     pedido.CobrancaId = cobrancaNova.Id;
@@ -72,7 +72,7 @@ namespace Infraestructure.Repositories
                         .AsNoTracking()
                         .ToList();
 
-                    cobrancaExistente.Alteracao = DateTime.Now;
+                    cobrancaExistente.Alteracao = DateTime.UtcNow;
                     cobrancaExistente.Valor = pedidosCobrados.Sum(pc => pc.Valor);
 
                     _context.Update(cobrancaExistente);
@@ -100,7 +100,7 @@ namespace Infraestructure.Repositories
                 foreach (var pedido in pedidos)
                 {
                     pedido.Pago = Pedido.PedidoStatus.Pago;
-                    pedido.Status = cobranca.DataCobranca >= DateTime.Now || cobranca.DataCobranca == null 
+                    pedido.Status = cobranca.DataCobranca >= DateTime.UtcNow || cobranca.DataCobranca == null 
                         ? Pedido.CobrancaStatus.PagoEmDia : Pedido.CobrancaStatus.PagoComAtraso;
 
                     _context.Update(pedido);
@@ -108,7 +108,7 @@ namespace Infraestructure.Repositories
 
                 cobranca.Valor = 0;
                 cobranca.DataCobranca = null;
-                cobranca.Alteracao = DateTime.Now;
+                cobranca.Alteracao = DateTime.UtcNow;
 
                 _context.Update(cobranca);
 
@@ -140,7 +140,7 @@ namespace Infraestructure.Repositories
                 }
 
                 cobranca.CobrancaPerdida = true;
-                cobranca.Alteracao = DateTime.Now;
+                cobranca.Alteracao = DateTime.UtcNow;
 
                 var cliente = _context.Clientes.FirstOrDefault(cl => cl.Id == cobranca.ClienteId);
 

@@ -3,12 +3,12 @@ using System;
 using Infraestructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Infraestructure.Data
+namespace Infraestructure.Migrations
 {
     [DbContext(typeof(VrContext))]
     partial class VrContextModelSnapshot : ModelSnapshot
@@ -18,43 +18,44 @@ namespace Infraestructure.Data
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.4")
-                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Application.Core.Entities.Cliente", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_CLIENTE");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_CLIENTE")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTECLIENTE");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVCLIENTE");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODICLIENTE");
 
                     b.Property<string>("Endereco")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("GN_ENDECLIE");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLCLIENTE");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("NM_NOMECLIE");
 
                     b.Property<string>("Numero")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("NR_NUMECLIE");
 
                     b.HasKey("Id");
@@ -66,47 +67,48 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_COBRANCA");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_COBRANCA")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTECOBRANCA");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVCOBRANCA");
 
                     b.Property<Guid>("ClienteId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_CLIE");
 
                     b.Property<bool>("CobrancaPerdida")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_COBRPERD");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODICOBRANCA");
 
                     b.Property<DateTime?>("DataCobranca")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_DATACOBR");
 
                     b.Property<decimal?>("Desconto")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_VALODESC");
 
                     b.Property<bool>("DescontoPorcento")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_DESCPORC");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLCOBRANCA");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_VALOCOBR");
 
                     b.HasKey("Id");
@@ -120,51 +122,52 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_PEDIDO");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_PEDIDO")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTEPEDIDO");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVPEDIDO");
 
                     b.Property<Guid>("ClienteId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_CLIE");
 
                     b.Property<Guid?>("CobrancaId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_COBR");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODIPEDIDO");
 
                     b.Property<bool>("Edicao")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_EDITPEDI");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLPEDIDO");
 
                     b.Property<int>("Pago")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("FL_PEDIPAGO");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("NR_QUANPEDI");
 
                     b.Property<int?>("Status")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("EN_STATCOBR");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_VALOPEDI");
 
                     b.HasKey("Id");
@@ -180,43 +183,44 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_PRODUTO");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_PRODUTO")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTEPRODUTO");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVPRODUTO");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODIPRODUTO");
 
                     b.Property<string>("Descricao1")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("NM_NOMEPROD");
 
                     b.Property<string>("Descricao2")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("GN_DESCPROD");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLPRODUTO");
 
                     b.Property<decimal>("Preco")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_PRECPROD");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("NR_QUANPROD");
 
                     b.Property<Guid?>("TipoId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_TIPO");
 
                     b.HasKey("Id");
@@ -230,39 +234,40 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_PRODUTOPEDIDO");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_PRODUTOPEDIDO")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTEPRODUTOPEDIDO");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVPRODUTOPEDIDO");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODIPRODUTOPEDIDO");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLPRODUTOPEDIDO");
 
                     b.Property<Guid>("PedidoId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_PEDI");
 
                     b.Property<Guid>("ProdutoId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_PROD");
 
                     b.Property<int>("Quantidade")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("NR_QUANPEDIPROD");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_VALOPEDIPROD");
 
                     b.HasKey("Id");
@@ -278,35 +283,36 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_VENDASRELATORIO");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_VENDASRELATORIO")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTEVENDASRELATORIO");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVVENDASRELATORIO");
 
                     b.Property<Guid>("ClienteId")
-                        .HasColumnType("uniqueidentifier")
+                        .HasColumnType("uuid")
                         .HasColumnName("ID_CLIE");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODIVENDASRELATORIO");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLVENDASRELATORIO");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("decimal(18,2)")
+                        .HasColumnType("numeric")
                         .HasColumnName("NR_VALOVEND");
 
                     b.Property<bool>("VendaGanha")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_VENDGANH");
 
                     b.HasKey("Id");
@@ -320,27 +326,28 @@ namespace Infraestructure.Data
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("ID_PRODUTOTIPO");
+                        .HasColumnType("uuid")
+                        .HasColumnName("ID_PRODUTOTIPO")
+                        .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("Alteracao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_ALTEPRODUTOTIPO");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("bit")
+                        .HasColumnType("boolean")
                         .HasColumnName("FL_ATIVPRODUTOTIPO");
 
                     b.Property<int?>("CodigoExterno")
-                        .HasColumnType("int")
+                        .HasColumnType("integer")
                         .HasColumnName("IE_CODIPRODUTOTIPO");
 
                     b.Property<DateTime>("Inclusao")
-                        .HasColumnType("datetime2")
+                        .HasColumnType("timestamp with time zone")
                         .HasColumnName("DT_INCLPRODUTOTIPO");
 
                     b.Property<string>("Tipo")
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("text")
                         .HasColumnName("NM_TIPO");
 
                     b.HasKey("Id");

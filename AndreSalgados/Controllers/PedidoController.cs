@@ -85,8 +85,8 @@ namespace AndreSalgados.Controllers
             var pedido = new Pedido
             {
                 Id = Id,
-                Inclusao = DateTime.Now,
-                Alteracao = DateTime.Now,
+                Inclusao = DateTime.UtcNow,
+                Alteracao = DateTime.UtcNow,
                 Ativo = true,
                 ClienteId = ClienteId,
                 Pago = Pago ? Pedido.PedidoStatus.Pago : Pedido.PedidoStatus.Pendente,
